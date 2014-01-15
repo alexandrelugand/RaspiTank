@@ -35,6 +35,7 @@
 #define __UINTMAX_TYPE__ long long unsigned int
 #define __linux 1
 #define __DEC32_EPSILON__ 1E-6DF
+#define __OPTIMIZE__ 1
 #define __CHAR_UNSIGNED__ 1
 #define __UINT32_MAX__ 4294967295U
 #define __LDBL_MAX_EXP__ 1024
@@ -45,6 +46,7 @@
 #define __DBL_DIG__ 15
 #define __SIZEOF_INT__ 4
 #define __SIZEOF_POINTER__ 4
+#define NDEBUG 1
 #define __USER_LABEL_PREFIX__ 
 #define __STDC_HOSTED__ 1
 #define __LDBL_HAS_INFINITY__ 1
@@ -57,6 +59,7 @@
 #define __SIZEOF_LONG__ 4
 #define __DECIMAL_DIG__ 17
 #define __gnu_linux__ 1
+#define RELEASE 1
 #define __ARM_PCS_VFP 1
 #define __LDBL_HAS_QUIET_NAN__ 1
 #define __GNUC__ 4
@@ -95,7 +98,6 @@
 #define __UINT16_MAX__ 65535
 #define __DBL_HAS_DENORM__ 1
 #define __UINT8_TYPE__ unsigned char
-#define __NO_INLINE__ 1
 #define __FLT_MANT_DIG__ 24
 #define __VERSION__ "4.6.3"
 #define __FLOAT_WORD_ORDER__ __ORDER_LITTLE_ENDIAN__
@@ -113,6 +115,7 @@
 #define __FLT_RADIX__ 2
 #define __INT_LEAST16_TYPE__ short int
 #define __LDBL_EPSILON__ 2.2204460492503131e-16L
+#define HAVE_GNUTLS 1
 #define __SIG_ATOMIC_MAX__ 2147483647
 #define __VFP_FP__ 1
 #define __SIZEOF_PTRDIFF_T__ 4
@@ -197,6 +200,7 @@
 #define __UINT32_TYPE__ unsigned int
 #define __UINTPTR_TYPE__ unsigned int
 #define __DEC64_SUBNORMAL_MIN__ 0.000000000000001E-383DD
+#define HAVE_PTHREADS 1
 #define __ARM_EABI__ 1
 #define __DEC128_MANT_DIG__ 34
 #define __LDBL_MIN_10_EXP__ (-307)
@@ -208,8 +212,6 @@
 #define __UINT_FAST8_TYPE__ unsigned char
 #define _GNU_SOURCE 1
 #define __ARM_FEATURE_DSP 1
-#define NDEBUG 
-#define RELEASE 
 #endif
 
 // --- Include directories begin --- //

@@ -12,18 +12,18 @@ AR := ar
 OBJCOPY := objcopy
 
 #Additional flags
-PREPROCESSOR_MACROS := NDEBUG RELEASE
-INCLUDE_DIRS := 
-LIBRARY_DIRS := 
-LIBRARY_NAMES := 
-ADDITIONAL_LINKER_INPUTS := 
-MACOS_FRAMEWORKS := 
+PREPROCESSOR_MACROS := NDEBUG RELEASE HAVE_PTHREADS HAVE_GNUTLS
+INCLUDE_DIRS :=
+LIBRARY_DIRS :=
+LIBRARY_NAMES :=pthread dl rt gnutls pam xml2 ev event
+ADDITIONAL_LINKER_INPUTS :=
+MACOS_FRAMEWORKS :=
 
 CFLAGS := -ggdb -ffunction-sections -O3
 CXXFLAGS := -ggdb -ffunction-sections -O3
-ASFLAGS := 
+ASFLAGS :=
 LDFLAGS := -Wl,-gc-sections
-COMMONFLAGS := 
+COMMONFLAGS :=
 
 START_GROUP := -Wl,--start-group
 END_GROUP := -Wl,--end-group
