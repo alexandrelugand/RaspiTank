@@ -3,13 +3,14 @@
 #include "RTException.h"
 #include "Command.h"
 #include "WebSocketServer.h"
+#include "log.h"
 using namespace std;
 using namespace RaspiTank;
 
 int main(int argc, char *argv[])
 {
-	cout << "RaspiTank Version 1.0.0" << endl;
-	cout << "LUGAND Alexandre, January 2014" << endl;
+	INFO("RaspiTank Version 1.0.0");
+	INFO("LUGAND Alexandre, January 2014");
 
 	try
 	{		
@@ -20,7 +21,7 @@ int main(int argc, char *argv[])
 			string strCmd, strCount;
 			int cmd = 0, count = 0;
 
-			printf("\t*** Enter command:\n");
+			WARNING("Wait command:");
 			cin >> strCmd;
 			if (strCmd.compare("exit") == 0)
 				break;
@@ -38,8 +39,8 @@ int main(int argc, char *argv[])
 			}
 
 			cmd = strtoul(strCmd.c_str(), NULL, 16);
-			printf("\t*** Cmd: 0x%08X\n", cmd);
-			printf("\t*** Enter frame count:\n");
+			WARNING("Process command: 0x%08X", cmd);
+			WARNING("Enter frame count:");
 			cin >> strCount;
 			count = strtoul(strCount.c_str(), NULL, 10);
 			ctrl.AddCmd(new Command(cmd, count));
@@ -49,15 +50,15 @@ int main(int argc, char *argv[])
 	}
 	catch (RTException& ex)
 	{
-		cout << ex.what() << endl;
+		ERROR("RaspiTank exception: %s", ex.what());
 	}
 	catch (exception& ex)
 	{
-		cout << ex.what() << endl;
+		ERROR("Exception: %s", ex.what());
 	}
 	catch (...)
 	{
-		cout << "[Unknown exception]\n" << endl;
+		ERROR("[Unknown exception]");
 	}
 	
 	return 0;

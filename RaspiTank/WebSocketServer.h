@@ -1,6 +1,6 @@
 #pragma once
 #include "Singleton.h"
-#include "onion.h"
+#include "onion/onion.h"
 #include <thread>
 
 #define WS_BUFFER 2048
@@ -18,6 +18,8 @@ namespace RaspiTank
 		thread listenerThread;
 		onion* o;
 		onion_websocket* ws;
+		static mutex wsLock;
+
 		static void Listener();
 		static void Shutdown(int signal);
 		static onion_connection_status OnConnect(void *data, onion_request *req, onion_response *res);

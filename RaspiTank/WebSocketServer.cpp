@@ -1,5 +1,6 @@
 #include "WebSocketServer.h"
-#include "websocket.h"
+#include "onion/onion.h"
+#include "onion/websocket.h"
 #include "log.h"
 #include <errno.h>
 #include <string.h>
@@ -7,9 +8,12 @@
 #include <iostream>
 #include "Command.h"
 #include <memory>
+#include "Controller.h"
 
 using namespace std;
 using namespace RaspiTank;
+
+mutex WebSocketServer::wsLock;
 
 WebSocketServer::WebSocketServer()
 {
@@ -23,7 +27,7 @@ WebSocketServer::~WebSocketServer()
 
 void WebSocketServer::Initialize()
 {
-	cout << "Initialize web socket server..." << endl;
+	INFO("Initialize web socket server...");
 
 	signal(SIGINT, WebSocketServer::Shutdown);
 	signal(SIGTERM, WebSocketServer::Shutdown);
@@ -33,7 +37,7 @@ void WebSocketServer::Initialize()
 	onion_url *urls = onion_root_url(o);
 	onion_url_add(urls, "", (void*)WebSocketServer::OnConnect);	
 
-	cout << "web socket server initialized" << endl;
+	INFO("web socket server initialized");
 }
 
 void WebSocketServer::Listen()
@@ -43,7 +47,7 @@ void WebSocketServer::Listen()
 
 void WebSocketServer::Listener()
 {
-	cout << "Start web socket listener" << endl;
+	INFO("Start web socket listener");
 	WebSocketServer& wss = WebSocketServer::GetInstance();
 	onion_listen(wss.o);
 }
@@ -78,22 +82,28 @@ onion_connection_status WebSocketServer::OnConnect(void *data, onion_request *re
 
 onion_connection_status WebSocketServer::OnMessage(void *data, onion_websocket *ws, size_t data_ready_len)
 {
-	char tmp[256];
-	if (data_ready_len>sizeof(tmp))
-		data_ready_len = sizeof(tmp)-1;
-
-	int len = onion_websocket_read(ws, tmp, data_ready_len);
-	if (len == 0){
-		ERROR("Error reading data: %d: %s (%d)", errno, strerror(errno), data_ready_len);
-	}
-	tmp[len] = 0;
-	INFO("Read from websocket: %d: %s", len, tmp);
-
-	json_object * jobj = json_tokener_parse(tmp);
-	if (jobj)
+	if (data_ready_len > 0)
 	{
-		shared_ptr<Command> pCmd(new Command(jobj));
-	}	
+		wsLock.lock();
 
+		char* tmp = new char[data_ready_len];
+		int len = onion_websocket_read(ws, tmp, data_ready_len);
+		if (len == 0){
+			ERROR("Error reading data: %d: %s (%d)", errno, strerror(errno), data_ready_len);
+		}
+		tmp[len] = 0;
+		INFO("Read from websocket: %d:\n%s", len, tmp);
+
+		json_object* jobj = json_tokener_parse(tmp);
+		if (jobj != NULL)
+		{
+			Controller& ctrl = Controller::GetInstance();
+			ctrl.AddCmd(jobj);
+			json_object_put(jobj); //Delete the object
+		}
+		delete[] tmp;
+
+		wsLock.unlock();
+	}
 	return OCS_NEED_MORE_DATA;
 }

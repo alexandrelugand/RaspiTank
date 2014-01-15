@@ -37,7 +37,6 @@
 #define __DEC32_EPSILON__ 1E-6DF
 #define __CHAR_UNSIGNED__ 1
 #define __UINT32_MAX__ 4294967295U
-#define __GXX_EXPERIMENTAL_CXX0X__ 1
 #define __LDBL_MAX_EXP__ 1024
 #define __WINT_MIN__ 0U
 #define __linux__ 1
@@ -72,7 +71,6 @@
 #define __DEC32_MIN_EXP__ (-94)
 #define __THUMB_INTERWORK__ 1
 #define __INT_FAST16_TYPE__ int
-#define __STRICT_ANSI__ 1
 #define __LDBL_HAS_DENORM__ 1
 #define __cplusplus 1
 #define __DEC128_MAX__ 9.999999999999999999999999999999999E6144DL
@@ -106,6 +104,7 @@
 #define __DEC128_MIN_EXP__ (-6142)
 #define __INT_FAST32_TYPE__ int
 #define __UINT_LEAST16_TYPE__ short unsigned int
+#define unix 1
 #define __INT16_MAX__ 32767
 #define __SIZE_TYPE__ unsigned int
 #define __UINT64_MAX__ 18446744073709551615ULL
@@ -115,6 +114,7 @@
 #define __FLT_RADIX__ 2
 #define __INT_LEAST16_TYPE__ short int
 #define __LDBL_EPSILON__ 2.2204460492503131e-16L
+#define HAVE_GNUTLS 1
 #define __SIG_ATOMIC_MAX__ 2147483647
 #define __VFP_FP__ 1
 #define __SIZEOF_PTRDIFF_T__ 4
@@ -142,6 +142,7 @@
 #define __DEC32_MAX_EXP__ 97
 #define __INT_FAST8_MAX__ 127
 #define __INTPTR_MAX__ 2147483647
+#define linux 1
 #define __EXCEPTIONS 1
 #define __LDBL_MANT_DIG__ 53
 #define __DBL_HAS_QUIET_NAN__ 1
@@ -198,6 +199,7 @@
 #define __UINT32_TYPE__ unsigned int
 #define __UINTPTR_TYPE__ unsigned int
 #define __DEC64_SUBNORMAL_MIN__ 0.000000000000001E-383DD
+#define HAVE_PTHREADS 1
 #define __ARM_EABI__ 1
 #define __DEC128_MANT_DIG__ 34
 #define __LDBL_MIN_10_EXP__ (-307)
@@ -212,7 +214,7 @@
 #endif
 
 // --- Include directories begin --- //
-///home/pi/Dev/Projects/RaspberryTank/onion/src/onion
+///home/pi/Dev/Projects/RaspberryTank
 ///usr/include/c++/4.6
 ///usr/include/c++/4.6/arm-linux-gnueabihf
 ///usr/include/c++/4.6/backward

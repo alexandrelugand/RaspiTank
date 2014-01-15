@@ -82,6 +82,7 @@ namespace RaspiTank
 		static int NeutralCmd;
 
 		void Init(CmdType cmdtype = CmdType::neutral, int rep = 1, string msg = "");
+		void ParseJSON(json_object* jobj);
 
 	public:
 		Command();

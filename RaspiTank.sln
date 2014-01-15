@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RaspiTank", "RaspiTank\Rasp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebUI", "WebUI\WebUI.csproj", "{A1A6D53F-5E03-4FBB-8E55-2AA35D14E178}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "onion", "onion\onion.vcxproj", "{DAB544B9-588B-4364-A1CB-A6B06617EF33}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,16 @@ Global
 		{A1A6D53F-5E03-4FBB-8E55-2AA35D14E178}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{A1A6D53F-5E03-4FBB-8E55-2AA35D14E178}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{A1A6D53F-5E03-4FBB-8E55-2AA35D14E178}.Release|Win32.ActiveCfg = Release|Any CPU
+		{DAB544B9-588B-4364-A1CB-A6B06617EF33}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{DAB544B9-588B-4364-A1CB-A6B06617EF33}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{DAB544B9-588B-4364-A1CB-A6B06617EF33}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{DAB544B9-588B-4364-A1CB-A6B06617EF33}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DAB544B9-588B-4364-A1CB-A6B06617EF33}.Debug|Win32.Build.0 = Debug|Win32
+		{DAB544B9-588B-4364-A1CB-A6B06617EF33}.Release|Any CPU.ActiveCfg = Release|Win32
+		{DAB544B9-588B-4364-A1CB-A6B06617EF33}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{DAB544B9-588B-4364-A1CB-A6B06617EF33}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{DAB544B9-588B-4364-A1CB-A6B06617EF33}.Release|Win32.ActiveCfg = Release|Win32
+		{DAB544B9-588B-4364-A1CB-A6B06617EF33}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

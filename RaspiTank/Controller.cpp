@@ -14,6 +14,7 @@
 #include <pthread.h>
 #include "Utils.h"
 #include <system_error>
+#include "log.h"
 #include "WebSocketServer.h"
 
 using namespace std;
@@ -62,7 +63,6 @@ Controller::~Controller()
 
 void Controller::Initialize()
 {
-	//cout << "Initialize controller..." << endl;
 	INFO("Initialize controller...");
 
 	cmdSenderThread = thread(&Controller::CommandSender, this);
@@ -72,19 +72,19 @@ void Controller::Initialize()
 	sch.sched_priority = 20;
 	if (pthread_setschedparam(cmdSenderThread.native_handle(), SCHED_FIFO, &sch)) 
 	{
-		cout << "Failed to setschedparam: " << strerror(errno) << endl;
+		ERROR("Failed to increase Controller thread priority: %s", strerror(errno));
 	}
 
 	WebSocketServer& wss = WebSocketServer::GetInstance();
 	wss.Initialize();
 	wss.Listen();
 
-	cout << "Controller initialized" << endl;
+	INFO("Controller initialized");
 }
 
 void Controller::SetupIO()
 {
-	cout << "Setup IO in progress..." << endl;
+	INFO("Setup IO in progress...");
 
 	/* open /dev/mem */
 	if ((mem_fd = open("/dev/mem", O_RDWR | O_SYNC)) < 0)
@@ -122,7 +122,7 @@ void Controller::SetupIO()
 
 	GPIO_CLR = 1 << PIN;
 
-	cout << "Setup IO finished" << endl;
+	INFO("Setup IO finished");
 }
 
 void Controller::Dispose()
@@ -133,11 +133,11 @@ void Controller::Dispose()
 	WebSocketServer::GetInstance().Stop();
 	WebSocketServer::GetInstance().Kill();
 
-	cout << "Dispose controller..." << endl;
+	INFO("Dispose controller...");
 	StopThread = true;
 	if (cmdSenderThread.joinable())
 		cmdSenderThread.join();
-	cout << "Controller disposed" << endl;
+	INFO("Controller disposed");
 	Kill();
 }
 
@@ -186,7 +186,7 @@ void Controller::CommandSender(Controller* ctrl)
 		}
 				
 		if (!msg.empty())
-			cout << msg << endl;
+			INFO("Send command: %s", msg.c_str());
 
 		for (int i = 0; i < repeat; i++)
 			ctrl->SendCode(cmd);
@@ -235,12 +235,12 @@ void Controller::SendBit(int bit)
 void Controller::StartEngine()
 {
 	queueLock.lock();
-	AddCmdWithoutLock(CmdType::idle, 40);
-	AddCmdWithoutLock(CmdType::ignition, 40);
-	AddCmdWithoutLock(CmdType::neutral, 400, "Waiting for ignition...");
-	AddCmdWithoutLock(CmdType::ignition, 1, "Ignition done");
-	AddCmdWithoutLock(CmdType::engine_start, 10, "Warm up");
-	AddCmdWithoutLock(CmdType::neutral, 20);
+	AddCmd(CmdType::idle, 40, "", false);
+	AddCmd(CmdType::ignition, 40, "", false);
+	AddCmd(CmdType::neutral, 400, "Waiting for ignition...", false);
+	AddCmd(CmdType::ignition, 1, "Ignition done", false);
+	AddCmd(CmdType::engine_start, 10, "Warm up", false);
+	AddCmd(CmdType::neutral, 20, "", false);
 	queueLock.unlock();
 
 	while (!engineStarted)
@@ -248,15 +248,15 @@ void Controller::StartEngine()
 
 	sleep(2);
 
-	cout << "Engine started" << endl;
+	INFO("Engine started");
 }
 
 void Controller::StopEngine()
 {
 	queueLock.lock();
-	AddCmdWithoutLock(CmdType::neutral, 40);
-	AddCmdWithoutLock(CmdType::ignition, 5);
-	AddCmdWithoutLock(CmdType::engine_stop, 1, "Stopping engine...");
+	AddCmd(CmdType::neutral, 40, "", false);
+	AddCmd(CmdType::ignition, 5, "", false);
+	AddCmd(CmdType::engine_stop, 1, "Stopping engine...", false);
 	queueLock.unlock();
 
 	while (engineStarted)
@@ -264,31 +264,66 @@ void Controller::StopEngine()
 
 	sleep(2);
 
-	cout << "Engine stopped" << endl;
+	INFO("Engine stopped");
 }
 
-void Controller::AddCmd(Command* cmd)
-{
-	queueLock.lock();
-	AddCmdWithoutLock(cmd);
-	queueLock.unlock();
-}
-
-void Controller::AddCmdWithoutLock(Command* cmd)
+void Controller::AddCmd(Command* cmd, bool lock /*= true*/)
 {
 	shared_ptr<Command> pCmd(cmd);
+	if (pCmd->IsEngineStart())
+	{
+		StartEngine();
+		return;
+	}
+
+	if (pCmd->IsEngineStop())
+	{
+		StopEngine();
+		return;
+	}
+
+	if (lock)
+		queueLock.lock();
+	
 	cmdQueue.push(pCmd);
+
+	if (lock)
+		queueLock.unlock();
 }
 
-void Controller::AddCmd(CmdType cmdtype, int repeat/*=1*/, string msg/*=""*/)
-{
-	queueLock.lock();
-	AddCmdWithoutLock(cmdtype, repeat, msg);
-	queueLock.unlock();
-}
-
-void Controller::AddCmdWithoutLock(CmdType cmdtype, int repeat/*=1*/, string msg/*=""*/)
+void Controller::AddCmd(CmdType cmdtype, int repeat/*=1*/, string msg/*=""*/, bool lock /*= true*/)
 {
 	shared_ptr<Command> pCmd(new Command(cmdtype, repeat, msg));
+
+	if (lock)
+		queueLock.lock();
+
 	cmdQueue.push(pCmd);
+
+	if (lock)
+		queueLock.unlock();
+}
+
+void Controller::AddCmd(json_object* jobj, bool lock /*= true*/)
+{
+	shared_ptr<Command> pCmd(new Command(json_object_get(jobj)));
+	if (pCmd->IsEngineStart())
+	{
+		StartEngine();
+		return;
+	}
+
+	if (pCmd->IsEngineStop())
+	{
+		StopEngine();
+		return;
+	}
+
+	if (lock)
+		queueLock.lock();
+
+	cmdQueue.push(pCmd);
+
+	if (lock)
+		queueLock.unlock();
 }

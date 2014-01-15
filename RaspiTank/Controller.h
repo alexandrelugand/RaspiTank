@@ -7,7 +7,6 @@
 #include <mutex>
 #include "RTException.h"
 #include "Command.h"
-#include "log.h"
 
 using namespace std;
 
@@ -34,8 +33,6 @@ namespace RaspiTank
 		void SetupIO();
 		void SendCode(int code);
 		void SendBit(int bit);
-		void AddCmdWithoutLock(Command* cmd);
-		void AddCmdWithoutLock(CmdType cmdtype, int repeat = 1, string msg = "");
 
 		atomic<bool> StopThread;
 		queue<shared_ptr<Command> > cmdQueue;
@@ -48,8 +45,9 @@ namespace RaspiTank
 		void Dispose();
 
 		void SetFrameInt(int interval) { frameInt = interval; }
-		void AddCmd(Command* cmd);
-		void AddCmd(CmdType cmdtype, int repeat = 1, string msg = "");
+		void AddCmd(Command* cmd, bool lock = true);
+		void AddCmd(CmdType cmdtype, int repeat = 1, string msg = "", bool lock = true);
+		void AddCmd(json_object* jobj, bool lock = true);
 
 		void StartEngine();
 		void StopEngine();

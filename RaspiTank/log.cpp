@@ -110,11 +110,11 @@ void log_stderr(log_level level, const char *filename, int lineno, const char *f
 	if ((unsigned int)level>(sizeof(levelstr)/sizeof(levelstr[0]))-1)
 		level=(log_level)((sizeof(levelstr)/sizeof(levelstr[0]))-1);
 
-  int pid=(unsigned long long)pthread_self();
+ /* int pid=(unsigned long long)pthread_self();
   if (!(log_flags&LF_NOCOLOR))
     fprintf(stderr, "\033[%dm[%04X]%s ",30 + (pid%7)+1, pid, levelcolor[level]);
   else
-    fprintf(stderr, "[%04X] ", pid);
+    fprintf(stderr, "[%04X] ", pid);*/
   
   if (!(log_flags&LF_NOCOLOR))
     fprintf(stderr,"%s",levelcolor[level]);
@@ -124,8 +124,8 @@ void log_stderr(log_level level, const char *filename, int lineno, const char *f
 	t = time(NULL);
 	strftime(datetime, sizeof(datetime), "%Y-%m-%d %H:%M:%S", localtime(&t));
 	
-	fprintf(stderr, "[%s] [%s %s:%d] ", datetime, levelstr[level],  
-					filename, lineno); // I dont know why basename is char *. Please somebody tell me.
+	//fprintf(stderr, "[%s] [%s %s:%d] ", datetime, levelstr[level], filename, lineno); // I dont know why basename is char *. Please somebody tell me.
+	fprintf(stderr, "[%s] [%s] ", datetime, levelstr[level]); // I dont know why basename is char *. Please somebody tell me.
 	
 	va_list ap;
 	va_start(ap, fmt);

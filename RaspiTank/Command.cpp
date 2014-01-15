@@ -1,7 +1,10 @@
 #include "Command.h"
-#include "log.h"
+#include "onion/log.h"
 #include "Utils.h"
+#include <algorithm>
+#include <string> 
 
+using namespace std;
 using namespace RaspiTank;
 
 int Command::IdleCmd = 0xFE40121C;
@@ -47,31 +50,8 @@ Command::Command(int cmdCode, int repeat, string msg)
 }
 
 Command::Command(json_object* jobj)
-{
-	enum json_type type;
-	json_object_object_foreach(jobj, key, val)
-	{
-		string str = string_format("type: ");
-		type = json_object_get_type(val);
-		switch (type)
-		{
-		case json_type_null: str += "json_type_null";
-			break;
-		case json_type_boolean: str += "json_type_boolean";
-			break;
-		case json_type_double: str += "json_type_double";
-			break;
-		case json_type_int: str += "json_type_int";
-			break;
-		case json_type_object: str += "json_type_object";
-			break;
-		case json_type_array: str += "json_type_array";
-			break;
-		case json_type_string: str += "json_type_string";
-			break;
-		}
-		INFO(str.c_str());
-	}
+{		
+	ParseJSON(json_object_object_get(jobj, "Command"));
 }
 
 Command::~Command()
@@ -178,6 +158,92 @@ void Command::Init(CmdType cmdtype /*= CmdType::neutral*/, int rep /*= 1*/, stri
 	cmd = UNASSIGNED_CMD; //Préambule et postambule, CRC à 0
 	if (!msg.empty())
 		message = msg;
+}
+
+void Command::ParseJSON(json_object* jobj)
+{
+	json_object_object_foreach(jobj, key, val)
+	{
+		string strAttr(key);
+		transform(strAttr.begin(), strAttr.end(), strAttr.begin(), ::tolower);
+		if (strAttr.compare("idle") == 0)
+		{
+			idle = json_object_get_boolean(val) != 0;
+			message += string_format("Idle: %s / ", idle ? "true" : "false");
+		}
+		else if (strAttr.compare("ignition") == 0)
+		{
+			ignition = json_object_get_boolean(val) != 0;
+			message += string_format("Ignition: %s / ", ignition ? "true" : "false");
+		}
+		else if (strAttr.compare("neutral") == 0)
+		{
+			neutral = json_object_get_boolean(val) != 0;
+			message += string_format("Neutral: %s / ", neutral ? "true" : "false");
+		}
+		else if (strAttr.compare("repeat") == 0)
+		{
+			repeat = (unsigned int)json_object_get_int(val);
+			message += string_format("Reapeat: %d / ", repeat);
+		}
+		else if (strAttr.compare("direction") == 0)
+		{
+			direction = (Direction)json_object_get_int(val);
+			message += string_format("Direction: %d / ", direction);
+		}
+		else if (strAttr.compare("dirspeed") == 0)
+		{
+			dirspeed = (Speed)json_object_get_int(val);
+			message += string_format("Dir Speed: %d / ", dirspeed);
+		}
+		else if (strAttr.compare("rotation") == 0)
+		{
+			rotation = (Rotation)json_object_get_int(val);
+			message += string_format("Rotation: %d / ", rotation);
+		}
+		else if (strAttr.compare("rotspeed") == 0)
+		{
+			rotspeed = (Speed)json_object_get_int(val);
+			message += string_format("Rot Speed: %d / ", rotspeed);
+		}
+		else if (strAttr.compare("turrelrotation") == 0)
+		{
+			turrelRotation = (Rotation)json_object_get_int(val);
+			message += string_format("Turrel Rotation: %d / ", turrelRotation);
+		}
+		else if (strAttr.compare("canonelevation") == 0)
+		{
+			canonElevation = json_object_get_boolean(val) != 0;
+			message += string_format("Canon Elev: %s / ", canonElevation ? "true" : "false");
+		}
+		else if (strAttr.compare("fire") == 0)
+		{
+			fire = json_object_get_boolean(val) != 0;
+			message += string_format("Fire: %s / ", fire ? "true" : "false");
+		}
+		else if (strAttr.compare("gun") == 0)
+		{
+			gun = json_object_get_boolean(val) != 0;
+			message += string_format("Gun: %s / ", gun ? "true" : "false");
+		}
+		else if (strAttr.compare("enginestart") == 0)
+		{
+			engineStart = json_object_get_boolean(val) != 0;
+			if (engineStart)
+				neutral = true;
+			message += string_format("Engine Start: %s / ", engineStart ? "true" : "false");
+		}
+		else if (strAttr.compare("enginestop") == 0)
+		{
+			engineStop = json_object_get_boolean(val) != 0;
+			if (engineStop)
+				idle = true;
+			message += string_format("Engine Stop: %s / ", engineStop ? "true" : "false");
+		}
+	}
+	if (!message.empty())
+		message = message.substr(0, message.length() - 3);
+	cmd = UNASSIGNED_CMD; //Préambule et postambule, CRC à 0
 }
 
 const int Command::GetCmd()
