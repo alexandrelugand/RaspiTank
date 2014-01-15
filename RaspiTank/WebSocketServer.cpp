@@ -74,7 +74,7 @@ onion_connection_status WebSocketServer::OnConnect(void *data, onion_request *re
 	wss.ws = onion_websocket_new(req, res);
 	if (!wss.ws)
 		return OCS_PROCESSED;
-	wss.Log("Connected to RaspiTank. Waiting command...");
+	INFO("Connected to RaspiTank. Waiting command...");
 	onion_websocket_set_callback(wss.ws, WebSocketServer::OnMessage);
 
 	return OCS_WEBSOCKET;
