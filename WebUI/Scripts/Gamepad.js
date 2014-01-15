@@ -1,23 +1,10 @@
 /// <reference path="Command.js" /> 
 /// <reference path="javascript.js" /> 
+/// <reference path="Log.js" />
 /// <reference path="hammer.js" />
 
-//var canvas;
-//var context;
-//var BUFFER;
-//var WIDTH;
-//var HEIGHT;
-
-//var image;
-//var limitSize;
-//var inputSize;
-//var lastTime;
-//var stick;
-//var threshold;
-//var point;
-
-function GamePad(ctrl, imgsrc, inputSize, limitSize, threshold, pointRadius, pointSpeed, knobe, updateCallback, debug)
-{
+function GamePad(num, ctrl, imgsrc, inputSize, limitSize, threshold, pointRadius, pointSpeed, knobe, updateCallback, debug) {
+    this.Num = num;
     this.ctrl = ctrl;
     this.context = ctrl[0].getContext("2d");    
     this.width = ctrl[0].offsetWidth;
@@ -89,31 +76,26 @@ GamePad.prototype.Init = function () {
 	    no_mouseevents: true
 	});
 
-	//Hammer(this.ctrl[0], {
-	//    prevent_default: true,
-	//    no_mouseevents: true
-	//});
-
-	this.ctrl.hammer().on('touch', function (event) {
-	    that.stick.enabled = true;
-	})
-    .on('release', function (event) {
-	    that.stick.enabled = false;
+    this.ctrl.hammer().on('touch', function(event) {
+        that.stick.enabled = true;
     })
-    .on('dragstart', function (event) {
+    .on('release', function(event) {
+        that.stick.enabled = false;
+    })
+    .on('dragstart', function(event) {
         event.preventDefault();
         if (that.stick.enabled) {
             that.stick.setInputXY(event.gesture['center'].pageX - that.ctrl[0].offsetLeft, event.gesture['center'].pageY - that.ctrl[0].offsetTop);
             that.stick.active = true;
         }
     })
-    .on('drag', function (event) {
+    .on('drag', function(event) {
         event.preventDefault();
         if (that.stick.active) {
             that.stick.setInputXY(event.gesture['center'].pageX - that.ctrl[0].offsetLeft, event.gesture['center'].pageY - that.ctrl[0].offsetTop);
         }
     })
-    .on('dragend', function (event) {
+    .on('dragend', function(event) {
         that.stick.active = false;
         that.stick.setInputXY(that.stick.limit.x, that.stick.limit.y);
     });
@@ -128,7 +110,7 @@ GamePad.prototype.Init = function () {
             that.Draw();
 
             that.lastTime = now;
-        }, 1);
+        }, 40);
 	};
 }
 

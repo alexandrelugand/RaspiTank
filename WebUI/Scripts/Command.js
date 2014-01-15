@@ -2,7 +2,6 @@
     this.idle = false;
     this.ignition = false;
     this.neutral = false;
-    this.repeat = 1;
     this.direction = 0;
     this.dirspeed = 0;
     this.rotation = 0;
@@ -23,7 +22,6 @@ Command.prototype.toJSON = function () {
            '\t\t"idle": ' + this.idle + ',\n'+                
            '\t\t"ignition": ' + this.ignition + ',\n' +
             '\t\t"neutral" : ' + this.neutral + ',\n' +
-            '\t\t"repeat" : ' + this.repeat + ',\n' +
             '\t\t"direction" : ' + this.direction + ',\n' +
             '\t\t"dirspeed" : ' + this.dirspeed + ',\n' +
             '\t\t"rotation": ' + this.rotation + ',\n' +
@@ -44,7 +42,6 @@ Command.prototype.equals = function (other) {
         if (this.idle == other.idle &&
             this.ignition == other.ignition &&
             this.neutral == other.neutral &&
-            this.repeat == other.repeat &&
             this.direction == other.direction &&
             this.dirspeed == other.dirspeed &&
             this.rotation == other.rotation &&

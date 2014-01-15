@@ -1,11 +1,9 @@
 /// <reference path="~/Scripts/jquery-2.1.0.js" />
 
-/* Raspberry Tank Web UI JavaScript
-   Written by Ian Renton (http://ianrenton.com), February 2013
+/* RaspiTank Web UI JavaScript
+   Written by Alexandre Lugand, January 2014
    Released into the public domain without licence. */
 
-// All commands that could be sent to the vehicle.
-var command = null;
 
 // Port on which the tank's control server runs
 var CONTROL_PORT = 3000;
@@ -16,43 +14,60 @@ var WEBSOCKET_PORT = 3000;
 
 var webcamMng;
 var websocketMng;
-var command;
 var turrelGmPd;
 var moveGmPd;
 var engineState;
 var recoil;
+var alertsTimer;
+var rangeTimer;
+var sensors;
+var canvas;
+var redRetcule1;
+var redRetcule2;
+var greenRetcule1;
+var greenRetcule2;
+var reticuleNum;
 
-function RequestCmd(e) {
-    if (e.data.Action == "RequestCmd") {
-        if (command != null) {
-            var cmd = command;
-            command = null;
-            return cmd;
-        }
-    } else if (e.data.Action == "LOG") {
-        $("#Logger").append(e.data.Msg + "\n");
-        $('#Logger').scrollTop($('#Logger')[0].scrollHeight);
+function RequestCmd(data) {
+    if (data.Action == "LOG") {
+        Log(data.Msg);
     }
-    else if (e.data.Action == "ENGINE_STATUS") {
-        //$("#Logger").append("Engine status changed: " + e.data.Msg + "\n");
-        //$('#Logger').scrollTop($('#Logger')[0].scrollHeight);
-        engineState = e.data.Msg;
+    else if (data.Action == "ENGINE_STATUS") {
+        engineState = data.Msg;
+    }
+    else if (data.Action == "SENSORS") {
+        sensors = JSON.parse(data.Msg);
     }
     return null;
 }
 
 // Executes on page load.
 $(function () {
+
+    redRetcule1 = new Image();
+    redRetcule1.src = "../img/reticule_rouge_1.png";
+    
+    redRetcule2 = new Image();
+    redRetcule2.src = "../img/reticule_rouge_2.png";
+    
+    greenRetcule1 = new Image();
+    greenRetcule1.src = "../img/reticule_vert_1.png";
+    
+    greenRetcule2 = new Image();
+    greenRetcule2.src = "../img/reticule_vert_2.png";
+    
+    canvas = $("#webcamCanvas")[0];
+    reticuleNum = 0;
+
     //webcamMng = new WebCamMng(window.location.host, WEBCAM_PORT);
     webcamMng = new WebCamMng("192.168.0.10", WEBCAM_PORT, "#webcam");
     webcamMng.Start();
 
     //websocketMng = new websocketMng(window.location.host, WEBSOCKET_PORT);
     websocketMng = new WebSocketMng("192.168.0.10", WEBSOCKET_PORT, RequestCmd);
-    websocketMng.Start();
 
-    turrelGmPd = new GamePad($("#turrel-ctrl"), "../img/left_stick.png", 60, 60, 2, 20, 15, { X: 337, Y: 83, Size: 91 }, UpdateTurrelGmPd);
-    moveGmPd = new GamePad($("#move-ctrl"), "../img/right_stick.png", 60, 60, 2, 20, 15, { X: 337, Y: 83, Size: 91 }, UpdateMoveGmPd);
+    turrelGmPd = new GamePad(0, $("#turrel-ctrl"), "../img/left_stick.png", 60, 60, 2, 20, 15, { X: 337, Y: 83, Size: 91 }, UpdateTurrelGmPd);
+    moveGmPd = new GamePad(1, $("#move-ctrl"), "../img/right_stick.png", 60, 60, 2, 20, 15, { X: 337, Y: 83, Size: 91 }, UpdateMoveGmPd);
 
     $("#main").on("touchmove", function (e) {
         e.preventDefault();
@@ -65,8 +80,9 @@ $(function () {
     startbt.on("click", function (e) {
         if (engineState == "stop") {
             clearInterval(warmupTimer);
-            command = new Command();
+            var command = new Command();
             command.engineStart = true;
+            websocketMng.SendCmd(command, 1);
             engineState = "warmup";
             startbt.attr("src", "../img/StartStop_Off_d.png");
             setTimeout(function() {
@@ -80,8 +96,9 @@ $(function () {
             }, 1000);      
         } else if (engineState == "start") {
             clearInterval(warmupTimer);
-            command = new Command();
+            var command = new Command();
             command.engineStop = true;
+            websocketMng.SendCmd(command, 1);
             startbt.attr("src", "../img/StartStop_On_d.png");
             setTimeout(function () {
                 startbt.attr("src", "../img/StartStop_WarmUp.png");
@@ -100,8 +117,9 @@ $(function () {
     emergencybt.on("click", function(e) {
         clearInterval(warmupTimer);
         engineState = "stop";
-        command = new Command();
+        var command = new Command();
         command.engineStop = true;
+        websocketMng.SendCmd(command, 1);
         startbt.attr("src", "../img/StartStop_Off.png");
         emergencybt.attr("src", "../img/emergency_d.png");
         setTimeout(function () {
@@ -115,15 +133,16 @@ $(function () {
         setTimeout(function () {
             firebt.css("background-image", "url('../img/fire.png')");
         }, 100);
-        if (command == null)
-            command = new Command();
+        var command = new Command();
+        var repeat;
         if (!recoil) {
             command.fire = true;
-            command.repeat = 10;
+            repeat = 10;
         } else {
             command.recoil = true;
-            command.repeat = 50;
+            repeat = 50;
         }
+        websocketMng.SendCmd(command, repeat);
     });
     
     var gunbt = $("#gunbutton");
@@ -132,22 +151,60 @@ $(function () {
         setTimeout(function () {
             gunbt.css("background-image", "url('../img/gun.png')");
         }, 100);
-        if (command == null)
-            command = new Command();
-        command.repeat = 40;
+        var command = new Command();
+        var repeat = 40;
         command.gun = true;
+        websocketMng.SendCmd(command, repeat);
     });
+    
     
     var recoilbt = $("#recoilbutton");
     recoilbt.on("click", function (e) {
         if (!recoil) {
             recoilbt.css("background-image", "url('../img/recoil_on.png')");
             recoil = true;
-
+            var show = true;
+            alertsTimer = setInterval(function () {
+                show = drawAlerts(show);
+            }, 500);
+            rangeTimer = setInterval(function () {
+                drawRangeInfo();
+            }, 500);
+            showReticule(-1);
         } else {
             recoilbt.css("background-image", "url('../img/recoil_off.png')");
             recoil = false;
+            clearInterval(alertsTimer);
+            clearInterval(rangeTimer);
+            clearAllCanvas();
+            showReticule(0);
         }
+    });
+    
+    var reticulebt = $("#reticuleSelect");
+    reticulebt.on("click", function (e) {
+        if (!recoil)
+            return false;
+        
+        if (reticuleNum > -2) {
+            reticuleNum--;
+            showReticule(reticuleNum);
+        } else {
+            showReticule(2);
+        }
+        return true;
+    })
+    .on("contextmenu", function (e) {
+        if (!recoil)
+            return false;
+        
+        if (reticuleNum < 2) {
+            reticuleNum++;
+            showReticule(reticuleNum);
+        } else {
+            showReticule(-2);
+        }
+        return false;
     });
 
     var console = $("#log_panel");
@@ -176,120 +233,191 @@ $(function () {
     });
 });
 
-function UpdateTurrelGmPd(event) {
-    var hint = 2;
+$(window).unload(function () {
+    alert("Bye now!");
+});
 
-    var cmd = null;
+function clearAllCanvas() {
+    if (!canvas)
+        return;
+    
+    var ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, 640, 480);
+}
+
+function drawRangeInfo() {
+    if (!canvas)
+        return;
+
+    if (sensors == null)
+        return;
+    
+    var ctx = canvas.getContext("2d");
+    ctx.strokeStyle = "red"; // Définition de la couleur de contour
+    ctx.lineWidth = 1;
+    
+    ctx.clearRect(20, 440, 200, 480);
+    ctx.font = "18pt Verdana";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillStyle = "red";
+    var text = "Range: " + sensors.Range;
+    ctx.fillText(text, 20, 440);
+
+    ctx.stroke();
+}
+
+function drawAlerts(show) {
+    if (!canvas)
+        return false;
+
+    var ctx = canvas.getContext("2d");
+    ctx.strokeStyle = "red"; // Définition de la couleur de contour
+    ctx.lineWidth = 1;
+
+    ctx.clearRect(420, 10, 640, 30);
+    ctx.font = "18pt Verdana";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillStyle = "red";
+    if (show) {
+        var text = "Engage activated";
+        ctx.fillText(text, 420, 10);
+    }
+    
+    ctx.stroke();
+    
+    return !show;
+}
+
+function showReticule(num) {
+    reticuleNum = num;
+    var img = null;
+    var deg = 0;
+    switch (num) {
+        case -1:
+            img = redRetcule1;
+            deg = -60;
+            break;
+        case -2:
+            img = redRetcule2;
+            deg = -120;
+            break;
+        case 1:
+            img = greenRetcule1;
+            deg = 60;
+            break;
+        case 2:
+            img = greenRetcule2;
+            deg = 120;
+            break;
+        default:
+            break;
+    }
+    
+    $("#reticuleButton").css({
+        "webkitTransform": "rotate(" + deg + "deg)",
+        "MozTransform": "rotate(" + deg + "deg)",
+        "msTransform": "rotate(" + deg + "deg)",
+        "OTransform": "rotate(" + deg + "deg)",
+        "transform": "rotate(" + deg + "deg)"
+    });
+
+    drawReticule(img);
+}
+
+function drawReticule(img) {
+    if (!canvas)
+        return;
+    
+    var ctx = canvas.getContext("2d");
+  
+    ctx.clearRect(176, 96, 464, 384);
+    if (img) {
+        ctx.drawImage(
+            img,
+            0, 0,
+            288, 288,
+            176, 96,
+            288, 288
+        );
+    }
+
+    ctx.stroke();
+}
+
+function UpdateTurrelGmPd(event) {
+    var repeat = 1;
+    var command;
     if (event.X > 50) {
-        if (command == null)
-            command = new Command();
-        command.repeat = hint;
+        command = new Command();
         command.turrelRotation = 2;
+        websocketMng.SendCmd(command, repeat);
     }
     else if (event.X < -50) {
-        if (command == null)
-            command = new Command();
-        command.repeat = hint;
+        command = new Command();
         command.turrelRotation = 1;
+        websocketMng.SendCmd(command, repeat);
     }
 
     if (event.Y > 50 || event.Y < -50) {
-        if (command == null)
-            command = new Command();
-        command.repeat = hint * 2;
+        command = new Command();
         command.canonElevation = true;
+        websocketMng.SendCmd(command, repeat);
     }
-
-    //if (this.debug) {
-    //    $("#" + this.DebugCtrl).html("<h1>X: " + Number(X).toFixed(1) + "</h1><h1>Y: " + Number(Y).toFixed(1) + "</h1>");
-    //}
 }
 
 function UpdateMoveGmPd(event) {
-    var hint = 3;
-
-    var cmd = null;
-    if (event.X > 15) {
-        if (command == null)
-            command = new Command();
-        command.repeat = hint;
+    var repeat = 1;
+    var command;
+    if (event.X > 15 && event.X < 50) {
+        command = new Command();
         command.rotation = 2; //right
-        command.rotspeed = Math.abs(Math.round(event.X / 15));
+        command.rotspeed = 1; 
+        websocketMng.SendCmd(command, repeat);
     }
-    else if (event.X < -15) {
-        if (command == null)
-            command = new Command();
-        command.repeat = hint;
+    else if (event.X > 50 && event.X < 80) {
+        command = new Command();
+        command.rotation = 2; //right
+        command.rotspeed = 2;
+        websocketMng.SendCmd(command, repeat);
+    }
+    else if (event.X < -15 && event.X > -50) {
+        command = new Command();
         command.rotation = 1; //left
-        command.rotspeed = Math.abs(Math.round(event.X / 15));
+        command.rotspeed = Math.abs(Math.round(event.X / 40));
+        websocketMng.SendCmd(command, repeat);
+    }
+    else if (event.X < -50 && event.X > -80) {
+        command = new Command();
+        command.rotation = 1; //left
+        command.rotspeed = 2;
+        websocketMng.SendCmd(command, repeat);
     }
 
-    if (event.Y < -15) {
-        if (command == null)
-            command = new Command();
-        command.repeat = hint;
+    if (event.Y < -15 && event.Y > -35) {
+        command = new Command();
         command.direction = 0; //Forward
-        command.dirspeed = Math.abs(Math.round(event.Y / 15));
+        command.dirspeed = 2;
+        websocketMng.SendCmd(command, repeat);
     }
-    else if (event.Y > 15) {
-        if (command == null)
-            command = new Command();
-        command.repeat = hint;
+    else if (event.Y < -35) {
+        command = new Command();
+        command.direction = 0; //Forward
+        command.dirspeed = 3;
+        websocketMng.SendCmd(command, repeat);
+    }
+    else if (event.Y > 15 && event.Y < 35) {
+        command = new Command();
         command.direction = 1; //Reverse
-        command.dirspeed = Math.abs(Math.round(event.Y / 15));
+        command.dirspeed = 2;
+        websocketMng.SendCmd(command, repeat);
+    }
+    else if (event.Y > 35) {
+        command = new Command();
+        command.direction = 1; //Reverse
+        command.dirspeed = 3;
+        websocketMng.SendCmd(command, repeat);
     }
 }
 
-// Sets a command to either true or false by name, e.g. to go forwards use
-// set('forwards', true) and to stop going forwards, use set('forwards', false).
-function set(name, value) {
-    command[name] = value;
-    send();
-    return true;
-}
-
-// Toggles the state of autonomy.
-function toggleAutonomy() {
-    if (command['autonomy'] == true) {
-        command['autonomy'] = false;
-        $('span.autonomystate').html("OFF");
-        $('span.autonomybutton').html("Switch ON");
-    } else {
-        command['autonomy'] = true;
-        $('span.autonomystate').html("ON");
-        $('span.autonomybutton').html("Switch OFF");
-    }
-    send();
-}
-
-// Set all commands to false, in case there's been a glitch and something is
-// stuck on.
-function stop() {
-    for (var name in command) {
-        command[name] = false;
-    }
-    send();
-}
-
-// Send the current command set to the vehicle.
-function send() {
-    var commandBits = "";
-    for (var name in command) {
-        commandBits = commandBits + (command[name] ? "1" : "0");
-    }
-    $.get("http://192.168.0.10:3000?set" + commandBits);
-    /*$.get(window.location.protocol+'//'+window.location.host + ':' + CONTROL_PORT + "?set" + commandBits);*/
-
-}
-
-// Gets the sensor data
-function updateSensorData() {
-    $.get(window.location.protocol+'//'+window.location.host + "/sensordata.txt", "", function(data){
-        if (data != "") {
-            $('div.data').html("<h1>" + data + "</h1>");
-        }
-        else {
-            $('div.data').html("<h1>-</h1>");
-        }
-    }, "html");
-}

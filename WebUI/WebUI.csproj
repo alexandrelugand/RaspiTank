@@ -59,6 +59,15 @@
   <ItemGroup>
     <Content Include="img\background.jpg" />
     <Content Include="img\background2.jpg" />
+    <Content Include="img\dpad_1.png" />
+    <Content Include="img\dpad_2.png" />
+    <Content Include="img\dpad_3.png" />
+    <Content Include="img\dpad_4.png" />
+    <Content Include="img\dpad_5.png" />
+    <Content Include="img\dpad_6.png" />
+    <Content Include="img\dpad_7.png" />
+    <Content Include="img\dpad_8.png" />
+    <Content Include="img\dpad_9.png" />
     <Content Include="img\emergency.png" />
     <Content Include="img\emergency_d.png" />
     <Content Include="img\fire.png" />
@@ -69,6 +78,12 @@
     <Content Include="img\left_stick.png" />
     <Content Include="img\Recoil_Off.png" />
     <Content Include="img\Recoil_On.png" />
+    <Content Include="img\reticule_rouge_1.png" />
+    <Content Include="img\reticule_rouge_2.png" />
+    <Content Include="img\reticule_selector_bgd.png" />
+    <Content Include="img\reticule_selector_front.png" />
+    <Content Include="img\reticule_vert_1.png" />
+    <Content Include="img\reticule_vert_2.png" />
     <Content Include="img\StartStop_Off.png" />
     <Content Include="img\StartStop_Off_d.png" />
     <Content Include="img\StartStop_On.png" />
@@ -77,7 +92,8 @@
     <Content Include="img\StartStop_WarmUp_d.png" />
     <Content Include="Scripts\hammer.js" />
     <Content Include="Scripts\hammer.min.js" />
-    <Content Include="Scripts\jquery.hammer.min.js" />
+    <Content Include="Scripts\jquery.hammer-full.min.js" />
+    <Content Include="Scripts\Log.js" />
     <Content Include="Styles\Laptop.css" />
     <Content Include="img\left.png" />
     <Content Include="img\reverse.png" />
@@ -91,7 +107,6 @@
     <Content Include="Scripts\Gamepad.js" />
     <Content Include="Scripts\Command.js" />
     <Content Include="Scripts\WebcamMng.js" />
-    <Content Include="Scripts\WebSocketWorker.js" />
     <Content Include="Scripts\WebUI.js" />
     <Content Include="laptop\index.html" />
     <Content Include="packages.config" />
@@ -110,6 +125,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Scripts\jquery.hammer-full.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

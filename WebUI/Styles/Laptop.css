@@ -1,4 +1,4 @@
-﻿@media screen and (min-width: 1280px) {
+﻿@media screen and (min-width: 1280px) and (orientation:landscape) {
     body {
         width: 1280px;
         height: 665px;
@@ -35,9 +35,29 @@
          padding-left: 64px;              
     }
 
-    #webcam img {
+    #webcam canvas {
+        width:640px;
+        height:480px;
+        z-index: 0;
+        position: absolute;
+    }
+
+    #webcam div {
          border:solid;
-         border-width:1px;   
+         border-width:1px; 
+         border-color: gray;
+         background-color:silver;
+         width:640px;
+         height:480px;  
+         border-radius: 10px;
+    }
+
+    #webcam img {
+        border: solid;
+        border-width: 1px;
+        border-color: gray;
+        background-color: transparent;
+        border-radius: 10px;
     }
 
     #Logger {
@@ -147,9 +167,44 @@
         display: inline-block;
         width: 61px;
         height: 116px;
-        margin: 6px;
+        margin: 6px 0px 6px 6px;
         border-radius: 10px;
         line-height: 128px;   
         vertical-align:middle;
+    }
+
+    #reticuleSelect {
+        background-image: url('../img/reticule_selector_bgd.png');
+        display: inline-block;
+        width: 128px;
+        height: 128px;
+        margin: 0px;
+        line-height: 128px;   
+        vertical-align:middle;
+    }
+
+    #reticuleButton {
+        -webkit-transform-origin: 50% 50%;
+        -moz-transform-origin: 50% 50%;
+        -ms-transform-origin: 50% 50%;
+        -o-transform-origin: 50% 50%;
+        transform-origin: 50% 50%;
+    }
+
+    #DPad {
+        display: inline-block;
+        width: 116px;
+        height: 116px;
+        margin: 0px;
+        padding: 0px;
+        line-height: 128px;   
+        vertical-align:top;
+        line-height: 128px;  
+    }
+
+    #DPad div {
+        display: inline-block;
+        margin: 0px;
+        padding: 0px;
     }
 }
