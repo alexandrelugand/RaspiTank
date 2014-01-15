@@ -1,0 +1,229 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source files">
+      <UniqueIdentifier>{c487d44b-535c-4e92-8423-8502f3b6011a}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header files">
+      <UniqueIdentifier>{2db0c882-b6a6-456e-b021-fdfffb09727c}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource files">
+      <UniqueIdentifier>{739326a4-b027-4312-a25a-2a5c6612da1a}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Make files">
+      <UniqueIdentifier>{a22f8fe8-c7ea-43d8-92fb-7a7c1d57bbf4}</UniqueIdentifier>
+      <Extensions>*.mak</Extensions>
+    </Filter>
+    <Filter Include="extras">
+      <UniqueIdentifier>{e16554b1-26a5-4a89-81a3-8caf20409754}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="handlers">
+      <UniqueIdentifier>{2a929ff8-5e89-440e-9e2f-7b3fbe0d1de7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="onion.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="extras\png.h">
+      <Filter>extras</Filter>
+    </ClInclude>
+    <ClInclude Include="handlers\auth_pam.h">
+      <Filter>handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="handlers\exportlocal.h">
+      <Filter>handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="handlers\internal_status.h">
+      <Filter>handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="handlers\opack.h">
+      <Filter>handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="handlers\path.h">
+      <Filter>handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="handlers\static.h">
+      <Filter>handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="handlers\webdav.h">
+      <Filter>handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="block.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="codecs.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="dict.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="gcc_Debug.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="gcc_Release.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="handler.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="http.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="https.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="listen_point.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="log.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="mime.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="poller.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="random.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="request.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="response.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="sd-daemon.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="server.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="sessions.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="shortcuts.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="types.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="types_internal.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="url.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="websocket.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
+    <None Include="debug.mak">
+      <Filter>Make files</Filter>
+    </None>
+    <None Include="release.mak">
+      <Filter>Make files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="extras\png.c">
+      <Filter>extras</Filter>
+    </ClCompile>
+    <ClCompile Include="handlers\auth_pam.c">
+      <Filter>handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="handlers\exportlocal.c">
+      <Filter>handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="handlers\internal_status.c">
+      <Filter>handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="handlers\opack.c">
+      <Filter>handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="handlers\path.c">
+      <Filter>handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="handlers\static.c">
+      <Filter>handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="handlers\webdav.c">
+      <Filter>handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="block.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="codecs.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="dict.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="handler.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="http.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="https.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="listen_point.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="log.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="mime.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="onion.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="poller.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="poller_libev.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="poller_libevent.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="random-default.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="random-gnutls.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="request.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="request_parser.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="response.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="sd-daemon.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="sessions.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="shortcuts.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="url.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="websocket.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

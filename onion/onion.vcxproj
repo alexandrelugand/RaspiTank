@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{DAB544B9-588B-4364-A1CB-A6B06617EF33}</ProjectGuid>
+    <ProjectName>onion</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeIncludeSearchPath>$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.0.10\0000\include\c++\4.6;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.0.10\0000\include\c++\4.6\arm-linux-gnueabihf;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.0.10\0000\include\c++\4.6\backward;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.0.10\0001\include;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.0.10\0003\include;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.0.10\0002\include-fixed;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.0.10\0000\include\arm-linux-gnueabihf;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.0.10\0000\include;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.0.10\0000\include\libxml;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes>$(ProjectDir)\gcc_Debug.h;$(VISUALGDB_DIR)\gcc_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
+    <NMakeOutput>$(ProjectDir)onion-Debug.vgdbsettings</NMakeOutput>
+    <IncludePath />
+    <ReferencePath />
+    <LibraryPath />
+    <NMakePreprocessorDefinitions>__VisualGDB_CFG_Debug;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeIncludeSearchPath>$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.0.10\0000\include\c++\4.6;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.0.10\0000\include\c++\4.6\arm-linux-gnueabihf;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.0.10\0000\include\c++\4.6\backward;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.0.10\0001\include;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.0.10\0003\include;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.0.10\0002\include-fixed;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.0.10\0000\include\arm-linux-gnueabihf;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.0.10\0000\include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes>$(ProjectDir)\gcc_Release.h;$(VISUALGDB_DIR)\gcc_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakePreprocessorDefinitions>__VisualGDB_CFG_Release;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
+    <NMakeOutput>$(ProjectDir)onion-Release.vgdbsettings</NMakeOutput>
+    <IncludePath />
+    <ReferencePath />
+    <LibraryPath />
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="block.h" />
+    <ClInclude Include="codecs.h" />
+    <ClInclude Include="dict.h" />
+    <ClInclude Include="extras\png.h" />
+    <ClInclude Include="gcc_Debug.h" />
+    <ClInclude Include="gcc_Release.h" />
+    <ClInclude Include="handler.h" />
+    <ClInclude Include="handlers\auth_pam.h" />
+    <ClInclude Include="handlers\exportlocal.h" />
+    <ClInclude Include="handlers\internal_status.h" />
+    <ClInclude Include="handlers\opack.h" />
+    <ClInclude Include="handlers\path.h" />
+    <ClInclude Include="handlers\static.h" />
+    <ClInclude Include="handlers\webdav.h" />
+    <ClInclude Include="http.h" />
+    <ClInclude Include="https.h" />
+    <ClInclude Include="listen_point.h" />
+    <ClInclude Include="log.h" />
+    <ClInclude Include="mime.h" />
+    <ClInclude Include="onion.h" />
+    <ClInclude Include="poller.h" />
+    <ClInclude Include="random.h" />
+    <ClInclude Include="request.h" />
+    <ClInclude Include="response.h" />
+    <ClInclude Include="sd-daemon.h" />
+    <ClInclude Include="server.h" />
+    <ClInclude Include="sessions.h" />
+    <ClInclude Include="shortcuts.h" />
+    <ClInclude Include="types.h" />
+    <ClInclude Include="types_internal.h" />
+    <ClInclude Include="url.h" />
+    <ClInclude Include="websocket.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="debug.mak" />
+    <None Include="Makefile" />
+    <None Include="release.mak" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="block.c" />
+    <ClCompile Include="codecs.c" />
+    <ClCompile Include="dict.c" />
+    <ClCompile Include="extras\png.c" />
+    <ClCompile Include="handler.c" />
+    <ClCompile Include="handlers\auth_pam.c" />
+    <ClCompile Include="handlers\exportlocal.c" />
+    <ClCompile Include="handlers\internal_status.c" />
+    <ClCompile Include="handlers\opack.c" />
+    <ClCompile Include="handlers\path.c" />
+    <ClCompile Include="handlers\static.c" />
+    <ClCompile Include="handlers\webdav.c" />
+    <ClCompile Include="http.c" />
+    <ClCompile Include="https.c" />
+    <ClCompile Include="listen_point.c" />
+    <ClCompile Include="log.c" />
+    <ClCompile Include="mime.c" />
+    <ClCompile Include="onion.c" />
+    <ClCompile Include="poller.c" />
+    <ClCompile Include="poller_libev.c" />
+    <ClCompile Include="poller_libevent.c" />
+    <ClCompile Include="random-default.c" />
+    <ClCompile Include="random-gnutls.c" />
+    <ClCompile Include="request.c" />
+    <ClCompile Include="request_parser.c" />
+    <ClCompile Include="response.c" />
+    <ClCompile Include="sd-daemon.c" />
+    <ClCompile Include="sessions.c" />
+    <ClCompile Include="shortcuts.c" />
+    <ClCompile Include="url.c" />
+    <ClCompile Include="websocket.c" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
