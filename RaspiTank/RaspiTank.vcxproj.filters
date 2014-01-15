@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source files">
+      <UniqueIdentifier>{22b23a24-0abc-47ac-897c-25d8977ca333}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header files">
+      <UniqueIdentifier>{77c49426-7651-4e8d-8e87-35462904b524}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource files">
+      <UniqueIdentifier>{9a2aa594-8446-4f87-9f99-982a7bde384b}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Make files">
+      <UniqueIdentifier>{297c601c-7453-4054-8974-a6efd7a06212}</UniqueIdentifier>
+      <Extensions>*.mak</Extensions>
+    </Filter>
+    <Filter Include="Header files\Exception">
+      <UniqueIdentifier>{cb1ce25c-c519-433e-b936-84112393a7d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\Exception">
+      <UniqueIdentifier>{55b4c905-81e0-4e8b-a298-8f30428a4d85}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="RaspiTank.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="call_stack.cpp">
+      <Filter>Source files\Exception</Filter>
+    </ClCompile>
+    <ClCompile Include="Command.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="WebSocketServer.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
+    <None Include="debug.mak">
+      <Filter>Make files</Filter>
+    </None>
+    <None Include="release.mak">
+      <Filter>Make files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Singleton.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="call_stack.h">
+      <Filter>Header files\Exception</Filter>
+    </ClInclude>
+    <ClInclude Include="RTException.h">
+      <Filter>Header files\Exception</Filter>
+    </ClInclude>
+    <ClInclude Include="stack_exception.h">
+      <Filter>Header files\Exception</Filter>
+    </ClInclude>
+    <ClInclude Include="Command.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="WebSocketServer.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
