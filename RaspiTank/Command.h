@@ -52,7 +52,8 @@ namespace RaspiTank
 		machine_gun = 0x00002000,
 		fire = 0x00004000,
 		engine_start = 0x00008000,
-		engine_stop = 0x00010000
+		engine_stop = 0x00010000,
+		recoil = 0x00020000
 	};
 
 	class Command
@@ -71,9 +72,9 @@ namespace RaspiTank
 		bool fire;
 		bool gun;
 		int cmd;
-		//string message;
 		bool engineStart;
 		bool engineStop;
+		bool recoil;
 
 		void CRC(int& cmd);
 
@@ -107,9 +108,9 @@ namespace RaspiTank
 		void CanonElevation() { canonElevation = true; }
 		void Fire() { fire = true; }
 		void Gun() { gun = true; }
+		void Recoil() { recoil = true; }
 
 		const int GetCmd();
-		//const string& GetMessage() { return message; }
 
 		const bool IsEngineStart() { return engineStart; }
 		const bool IsEngineStop() { return engineStop; }

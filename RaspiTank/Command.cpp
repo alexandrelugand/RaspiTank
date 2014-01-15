@@ -72,6 +72,7 @@ void Command::Init(CmdType cmdtype /*= CmdType::neutral*/, int rep /*= 1*/, stri
 	canonElevation = false;
 	fire = false;
 	gun = false;
+	recoil = false;
 	engineStart = false;
 	engineStop = false;
 
@@ -79,85 +80,68 @@ void Command::Init(CmdType cmdtype /*= CmdType::neutral*/, int rep /*= 1*/, stri
 	{
 	case RaspiTank::idle:
 		idle = true;
-		//message = "Idle";
 		break;
 	case RaspiTank::ignition:
 		ignition = true;
-		//message = "Ignition";
 		break;
 	case RaspiTank::neutral:
 		neutral = true;
-		//message = "Neutral";
 		break;
 	case RaspiTank::left_slow:
 		SetRotation(Rotation::Left, Speed::Slow);
-		//message = "Left slow";
 		break;
 	case RaspiTank::left_fast:
 		SetRotation(Rotation::Left, Speed::Fast);
-		//message = "Left fast";
 		break;
 	case RaspiTank::right_slow:
 		SetRotation(Rotation::Right, Speed::Slow);
-		//message = "Right slow";
 		break;
 	case RaspiTank::right_fast:
 		SetRotation(Rotation::Right, Speed::Fast);
-		//message = "Right fast";
 		break;
 	case RaspiTank::fwd_slow:
 		SetDirection(Direction::Forward, Speed::Slow);
-		//message = "Forward slow";
 		break;
 	case RaspiTank::fwd_fast:
 		SetDirection(Direction::Forward, Speed::Fast);
-		//message = "Forward fast";
 		break;
 	case RaspiTank::back_slow:
 		SetDirection(Direction::Backward, Speed::Slow);
-		//message = "Backward slow";
 		break;
 	case RaspiTank::back_fast:
 		SetDirection(Direction::Backward, Speed::Fast);
-		//message = "Backward fast";
 		break;
 	case RaspiTank::turret_left:
 		SetTurrelRotation(Rotation::Left);
-		//message = "Turret left";
 		break;
 	case RaspiTank::turret_right:
 		SetTurrelRotation(Rotation::Right);
-		//message = "Turret right";
 		break;
 	case RaspiTank::canon_elev:
 		CanonElevation();
-		//message = "Canon elevation";
 		break;
 	case RaspiTank::machine_gun:
 		Gun();
-		//message = "Machine gun";
 		break;
 	case RaspiTank::fire:
 		Fire();
-		//message = "Fire";
 		break;
 	case RaspiTank::engine_start:
 		engineStart = true;
 		neutral = true;
-		//message = "Engine started";
 		break;
 	case RaspiTank::engine_stop:
 		engineStop = true;
 		idle = true;
-		//message = "Engine stopped";
+		break;
+	case RaspiTank::recoil:
+		Recoil();
 		break;
 	default:
 		break;
 	}
 
 	cmd = UNASSIGNED_CMD; //Préambule et postambule, CRC à 0
-	/*if (!msg.empty())
-		message = msg;*/
 }
 
 void Command::ParseJSON(json_object* jobj)
@@ -169,80 +153,68 @@ void Command::ParseJSON(json_object* jobj)
 		if (strAttr.compare("idle") == 0)
 		{
 			idle = json_object_get_boolean(val) != 0;
-			//message += string_format("Idle: %s / ", idle ? "true" : "false");
 		}
 		else if (strAttr.compare("ignition") == 0)
 		{
 			ignition = json_object_get_boolean(val) != 0;
-			//message += string_format("Ignition: %s / ", ignition ? "true" : "false");
 		}
 		else if (strAttr.compare("neutral") == 0)
 		{
 			neutral = json_object_get_boolean(val) != 0;
-			//message += string_format("Neutral: %s / ", neutral ? "true" : "false");
 		}
 		else if (strAttr.compare("repeat") == 0)
 		{
 			repeat = (unsigned int)json_object_get_int(val);
-			//message += string_format("Reapeat: %d / ", repeat);
 		}
 		else if (strAttr.compare("direction") == 0)
 		{
 			direction = (Direction)json_object_get_int(val);
-			//message += string_format("Direction: %d / ", direction);
 		}
 		else if (strAttr.compare("dirspeed") == 0)
 		{
 			dirspeed = (Speed)json_object_get_int(val);
-			//message += string_format("Dir Speed: %d / ", dirspeed);
 		}
 		else if (strAttr.compare("rotation") == 0)
 		{
 			rotation = (Rotation)json_object_get_int(val);
-			//message += string_format("Rotation: %d / ", rotation);
 		}
 		else if (strAttr.compare("rotspeed") == 0)
 		{
 			rotspeed = (Speed)json_object_get_int(val);
-			//message += string_format("Rot Speed: %d / ", rotspeed);
 		}
 		else if (strAttr.compare("turrelrotation") == 0)
 		{
 			turrelRotation = (Rotation)json_object_get_int(val);
-			//message += string_format("Turrel Rotation: %d / ", turrelRotation);
 		}
 		else if (strAttr.compare("canonelevation") == 0)
 		{
 			canonElevation = json_object_get_boolean(val) != 0;
-			//message += string_format("Canon Elev: %s / ", canonElevation ? "true" : "false");
 		}
 		else if (strAttr.compare("fire") == 0)
 		{
 			fire = json_object_get_boolean(val) != 0;
-			//message += string_format("Fire: %s / ", fire ? "true" : "false");
 		}
 		else if (strAttr.compare("gun") == 0)
 		{
 			gun = json_object_get_boolean(val) != 0;
-			//message += string_format("Gun: %s / ", gun ? "true" : "false");
 		}
 		else if (strAttr.compare("enginestart") == 0)
 		{
 			engineStart = json_object_get_boolean(val) != 0;
 			if (engineStart)
 				neutral = true;
-			//message += string_format("Engine Start: %s / ", engineStart ? "true" : "false");
 		}
 		else if (strAttr.compare("enginestop") == 0)
 		{
 			engineStop = json_object_get_boolean(val) != 0;
 			if (engineStop)
 				idle = true;
-			//message += string_format("Engine Stop: %s / ", engineStop ? "true" : "false");
+		}
+		else if (strAttr.compare("recoil") == 0)
+		{
+			recoil = json_object_get_boolean(val) != 0;
 		}
 	}
-	//if (!message.empty())
-//		message = message.substr(0, message.length() - 3);
 	cmd = UNASSIGNED_CMD; //Préambule et postambule, CRC à 0
 }
 
@@ -257,19 +229,18 @@ const int Command::GetCmd()
 
 	if (idle) //Dans ce cas de figure, le controleur démarre une procédure spéciale
 	{
-		//msg += string_format("Idle: %s / ", idle ? "true" : "false");
 		return IdleCmd;
 	}
 
 	if (ignition) //Dans ce cas de figure, le controleur démarre une procédure spéciale
 	{
-		msg += string_format("Ignition: %s / ", ignition ? "true" : "false");
+		msg += "Ignition / ";
 		return IgnitionCmd;
 	}
 
 	if (neutral)
 	{
-		msg += string_format("Neutral: %s / ", neutral ? "true" : "false");
+		msg += "Neutral / ";
 		return NeutralCmd;
 	}
 
@@ -293,7 +264,7 @@ const int Command::GetCmd()
 	//Doit-on tirer avec le canon ?
 	if (fire)
 	{
-		msg += string_format("Fire: %s / ", fire ? "true" : "false");
+		msg += "Fire / ";
 		cmd |= 0x00020000; //Lève le bit 17 à 1
 	}
 
@@ -315,7 +286,7 @@ const int Command::GetCmd()
 	//Doit-on incliner le canon ?
 	if (canonElevation)
 	{
-		msg += string_format("Canon Elev: %s / ", canonElevation ? "true" : "false");
+		msg += "Canon Elev / ";
 		cmd |= 0x00004000; //Lève le bit 14 à 1
 	}
 
@@ -344,8 +315,14 @@ const int Command::GetCmd()
 	//Doit-on tirer avec la mitrailleuse ?
 	if (gun)
 	{
-		msg += string_format("Gun: %s / ", gun ? "true" : "false");
+		msg += "Gun / ";
 		cmd |= 0x00000040; //Lève le bit 6 à 1
+	}
+
+	if (recoil)
+	{
+		msg += "Recoil / ";
+		cmd |= 0x00002000; //Lève le bit 13 à 1
 	}
 
 	if (!msg.empty())
