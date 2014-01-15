@@ -160,7 +160,6 @@ void Controller::CommandSender(Controller* ctrl)
 				ctrl->cmdQueue.pop();
 				cmd = pCmd.get()->GetCmd();
 				repeat = pCmd.get()->GetRepeat();
-				//msg = pCmd.get()->GetMessage();
 				if (pCmd.get()->IsEngineStart())
 				{
 					INFO("Starting engine ...");
@@ -184,16 +183,12 @@ void Controller::CommandSender(Controller* ctrl)
 			Command pCmd(CmdType::neutral);
 			cmd = pCmd.GetCmd();				
 			repeat = 1;
-			//msg = "";
 		}
 		else
 		{
 			continue;
 		}
 				
-		/*if (!msg.empty())
-			INFO("Send command: %s", msg.c_str());*/
-
 		for (int i = 0; i < repeat; i++)
 			ctrl->SendCode(cmd);
 	}

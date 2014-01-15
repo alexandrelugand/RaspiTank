@@ -34,8 +34,6 @@ namespace RaspiTank
 			if (status == 0 && demangled)
 				symname = demangled;
 
-			//printf("entry: %s, %s\n", dlinfo.dli_fname, symname);
-
 			// store entry to stack
 			if (dlinfo.dli_fname && symname) 
 			{
