@@ -20,6 +20,7 @@ var command;
 var turrelGmPd;
 var moveGmPd;
 var engineState;
+var recoil;
 
 function RequestCmd(e) {
     if (e.data.Action == "RequestCmd") {
@@ -58,6 +59,7 @@ $(function () {
     });
 
     engineState = "stop";
+    recoil = false;
     var startbt = $("#startbutton");
     var warmupTimer = 0;
     startbt.on("click", function (e) {
@@ -115,8 +117,13 @@ $(function () {
         }, 100);
         if (command == null)
             command = new Command();
-        command.repeat = 10;
-        command.fire = true;
+        if (!recoil) {
+            command.fire = true;
+            command.repeat = 10;
+        } else {
+            command.recoil = true;
+            command.repeat = 50;
+        }
     });
     
     var gunbt = $("#gunbutton");
@@ -129,6 +136,18 @@ $(function () {
             command = new Command();
         command.repeat = 40;
         command.gun = true;
+    });
+    
+    var recoilbt = $("#recoilbutton");
+    recoilbt.on("click", function (e) {
+        if (!recoil) {
+            recoilbt.css("background-image", "url('../img/recoil_on.png')");
+            recoil = true;
+
+        } else {
+            recoilbt.css("background-image", "url('../img/recoil_off.png')");
+            recoil = false;
+        }
     });
 
     var console = $("#log_panel");

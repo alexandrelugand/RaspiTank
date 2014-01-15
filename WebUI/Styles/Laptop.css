@@ -141,4 +141,15 @@
         line-height: 128px;   
         vertical-align:middle;
     }
+
+    #recoilbutton {
+        background-image: url('../img/recoil_Off.png');
+        display: inline-block;
+        width: 61px;
+        height: 116px;
+        margin: 6px;
+        border-radius: 10px;
+        line-height: 128px;   
+        vertical-align:middle;
+    }
 }

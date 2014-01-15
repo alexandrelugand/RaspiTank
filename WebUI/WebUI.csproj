@@ -67,6 +67,8 @@
     <Content Include="img\gun.png" />
     <Content Include="img\gun_d.png" />
     <Content Include="img\left_stick.png" />
+    <Content Include="img\Recoil_Off.png" />
+    <Content Include="img\Recoil_On.png" />
     <Content Include="img\StartStop_Off.png" />
     <Content Include="img\StartStop_Off_d.png" />
     <Content Include="img\StartStop_On.png" />

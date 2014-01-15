@@ -13,6 +13,7 @@
     this.gun = false;
     this.engineStart = false;
     this.engineStop = false;
+    this.recoil = false;
 }
 
 Command.prototype.toJSON = function () {
@@ -32,7 +33,8 @@ Command.prototype.toJSON = function () {
             '\t\t"fire" : ' + this.fire + ',\n' +
             '\t\t"gun" : ' + this.gun + ',\n' +
             '\t\t"engineStart" : ' + this.engineStart + ',\n' +
-            '\t\t"engineStop" : ' + this.engineStop + '\n' +
+            '\t\t"engineStop" : ' + this.engineStop + ',\n' +
+            '\t\t"recoil" : ' + this.recoil + '\n' +
             '\t}\n'+                                  
             '}';
 }
@@ -52,7 +54,8 @@ Command.prototype.equals = function (other) {
             this.fire == other.fire &&
             this.gun == other.gun &&
             this.engineStart == other.engineStart &&
-            this.engineStop == other.engineStop)
+            this.engineStop == other.engineStop &&
+            this.recoil == other.recoil)
             return true;
     }
     return false;
