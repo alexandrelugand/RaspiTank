@@ -10,6 +10,12 @@
 #include <sys/syscall.h>
 #include <sys/types.h>
 #include "log.h"
+#include "WebSocketServer.h"
+#include <string>
+#include "Utils.h"
+
+using namespace std;
+using namespace RaspiTank;
 
 int log_flags=0;
 static pthread_mutex_t log_mutex=PTHREAD_MUTEX_INITIALIZER;
@@ -125,16 +131,23 @@ void log_stderr(log_level level, const char *filename, int lineno, const char *f
 	strftime(datetime, sizeof(datetime), "%Y-%m-%d %H:%M:%S", localtime(&t));
 	
 	//fprintf(stderr, "[%s] [%s %s:%d] ", datetime, levelstr[level], filename, lineno); // I dont know why basename is char *. Please somebody tell me.
-	fprintf(stderr, "[%s] [%s] ", datetime, levelstr[level]); // I dont know why basename is char *. Please somebody tell me.
-	
+	char buf[1024];
+	string msg = string_format("[%s][%s] ", datetime, levelstr[level]);	
 	va_list ap;
 	va_start(ap, fmt);
-	vfprintf(stderr, fmt, ap);
+	vsnprintf(buf, 1024, fmt, ap);
+	msg += string_format(buf);
 	va_end(ap);
+
+	fprintf(stderr, msg.c_str());
+
 	if (!(log_flags&LF_NOCOLOR))
 		fprintf(stderr, "\033[0m\n");
 	else
 		fprintf(stderr, "\n");
+		
+	WebSocketServer& wss = WebSocketServer::GetInstance();
+	wss.Log(msg);
 	
 	pthread_mutex_unlock(&log_mutex);
 }

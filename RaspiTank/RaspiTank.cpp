@@ -9,6 +9,8 @@ using namespace RaspiTank;
 
 int main(int argc, char *argv[])
 {
+	WebSocketServer& wss = WebSocketServer::GetInstance();
+
 	INFO("RaspiTank Version 1.0.0");
 	INFO("LUGAND Alexandre, January 2014");
 

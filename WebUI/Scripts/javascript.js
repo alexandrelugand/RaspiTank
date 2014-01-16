@@ -34,8 +34,10 @@ $(function() {
     });
 
     var ws = new WebSocket('ws://192.168.0.10:3000');
-    ws.onmessage = function(ev) {
-        alert(ev.data);
+    ws.onmessage = function (ev) {
+        $("#Logger").append(ev.data + "\n");
+        $('#Logger').scrollTop($('#Logger')[0].scrollHeight);
+        //alert(ev.data);
     };
 });
 

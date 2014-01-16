@@ -29,6 +29,7 @@ namespace RaspiTank
 		void Initialize();
 		void Listen();
 		void Stop();
+		void Log(const string& log);
 	};
 }
 
