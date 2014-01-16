@@ -62,7 +62,8 @@ Controller::~Controller()
 
 void Controller::Initialize()
 {
-	cout << "Initialize controller..." << endl;
+	//cout << "Initialize controller..." << endl;
+	INFO("Initialize controller...");
 
 	cmdSenderThread = thread(&Controller::CommandSender, this);
 	sched_param sch;
@@ -234,15 +235,14 @@ void Controller::SendBit(int bit)
 void Controller::StartEngine()
 {
 	queueLock.lock();
-	AddCmd(new Command(CmdType::idle, 40));
-	AddCmd(new Command(CmdType::ignition, 40));
-	AddCmd(new Command(CmdType::neutral, 400, "Waiting for ignition..."));
-	AddCmd(new Command(CmdType::ignition, 1, "Ignition done"));
-	AddCmd(new Command(CmdType::engine_start , 10, "Warm up"));
+	AddCmdWithoutLock(CmdType::idle, 40);
+	AddCmdWithoutLock(CmdType::ignition, 40);
+	AddCmdWithoutLock(CmdType::neutral, 400, "Waiting for ignition...");
+	AddCmdWithoutLock(CmdType::ignition, 1, "Ignition done");
+	AddCmdWithoutLock(CmdType::engine_start, 10, "Warm up");
+	AddCmdWithoutLock(CmdType::neutral, 20);
 	queueLock.unlock();
-//	AddCmd(new Command(CmdType::neutral, 100, "Warm up"));
-//	sleep(10);		
-//	AddCmd(new Command(CmdType::neutral, 1, "Engine started"));		
+
 	while (!engineStarted)
 		usleep(10000);
 
@@ -254,9 +254,9 @@ void Controller::StartEngine()
 void Controller::StopEngine()
 {
 	queueLock.lock();
-	AddCmd(new Command(CmdType::neutral, 40));
-	AddCmd(new Command(CmdType::ignition, 5));		
-	AddCmd(new Command(CmdType::engine_stop, 1, "Stopping engine..."));
+	AddCmdWithoutLock(CmdType::neutral, 40);
+	AddCmdWithoutLock(CmdType::ignition, 5);
+	AddCmdWithoutLock(CmdType::engine_stop, 1, "Stopping engine...");
 	queueLock.unlock();
 
 	while (engineStarted)
@@ -264,19 +264,31 @@ void Controller::StopEngine()
 
 	sleep(2);
 
-	//AddCmd(new Command(CmdType::idle, 40));
-
 	cout << "Engine stopped" << endl;
 }
 
 void Controller::AddCmd(Command* cmd)
 {
+	queueLock.lock();
+	AddCmdWithoutLock(cmd);
+	queueLock.unlock();
+}
+
+void Controller::AddCmdWithoutLock(Command* cmd)
+{
 	shared_ptr<Command> pCmd(cmd);
-	try
-	{
-		//queueLock.lock();
-		cmdQueue.push(pCmd);
-	}
-	catch (...) {}
-	//queueLock.unlock();
+	cmdQueue.push(pCmd);
+}
+
+void Controller::AddCmd(CmdType cmdtype, int repeat/*=1*/, string msg/*=""*/)
+{
+	queueLock.lock();
+	AddCmdWithoutLock(cmdtype, repeat, msg);
+	queueLock.unlock();
+}
+
+void Controller::AddCmdWithoutLock(CmdType cmdtype, int repeat/*=1*/, string msg/*=""*/)
+{
+	shared_ptr<Command> pCmd(new Command(cmdtype, repeat, msg));
+	cmdQueue.push(pCmd);
 }
