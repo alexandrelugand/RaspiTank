@@ -5,12 +5,16 @@
 #include <string.h>
 #include <signal.h>
 #include <iostream>
+#include "Command.h"
+#include <memory>
 
+using namespace std;
 using namespace RaspiTank;
 
 WebSocketServer::WebSocketServer()
 {
 	o = NULL;
+	ws = NULL;
 }
 
 WebSocketServer::~WebSocketServer()
@@ -47,6 +51,11 @@ void WebSocketServer::Listener()
 void WebSocketServer::Shutdown(int signal)
 {
 	WebSocketServer& wss = WebSocketServer::GetInstance();
+	if (wss.ws != NULL)
+	{
+		onion_websocket_free(wss.ws);
+		wss.ws = NULL;
+	}
 	onion_listen_stop(wss.o);
 }
 
@@ -57,21 +66,12 @@ void WebSocketServer::Stop()
 
 onion_connection_status WebSocketServer::OnConnect(void *data, onion_request *req, onion_response *res)
 {
-	onion_websocket *ws = onion_websocket_new(req, res);
-	//if (!ws)
-	//{
-	//	onion_response_write0(res,
-	//		"<html><body><h1>Easy echo</h1><pre id=\"chat\"></pre>"
-	//	/*	" <script>\ninit = function(){\nmsg=document.getElementById('msg');\nmsg.focus();\n\nws=new WebSocket('ws://'+window.location.host);\nws.onmessage=function(ev){\n document.getElementById('chat').textContent+=ev.data+'\\n';\n};}\n"
-	//		"window.addEventListener('load', init, false);\n</script>"*/
-	//		"<input type=\"text\" id=\"msg\" onchange=\"javascript:ws.send(msg.value); msg.select(); msg.focus();\"/>\n"
-	//		"</body></html>");
-
-	//	return OCS_PROCESSED;
-	//}
-
-	onion_websocket_printf(ws, "Hello from server. Write something to echo it");
-	onion_websocket_set_callback(ws, WebSocketServer::OnMessage);
+	WebSocketServer& wss = WebSocketServer::GetInstance();
+	wss.ws = onion_websocket_new(req, res);
+	if (!wss.ws)
+		return OCS_PROCESSED;
+	onion_websocket_printf(wss.ws, "Hello from server. Write something to echo it");
+	onion_websocket_set_callback(wss.ws, WebSocketServer::OnMessage);
 
 	return OCS_WEBSOCKET;
 }
@@ -83,15 +83,17 @@ onion_connection_status WebSocketServer::OnMessage(void *data, onion_websocket *
 		data_ready_len = sizeof(tmp)-1;
 
 	int len = onion_websocket_read(ws, tmp, data_ready_len);
-	if (len == 0)
-	{
-		ONION_ERROR("Error reading data: %d: %s (%d)", errno, strerror(errno), data_ready_len);
-		sleep(1);
+	if (len == 0){
+		ERROR("Error reading data: %d: %s (%d)", errno, strerror(errno), data_ready_len);
 	}
 	tmp[len] = 0;
-	onion_websocket_printf(ws, "Echo: %s", tmp);
+	INFO("Read from websocket: %d: %s", len, tmp);
 
-	ONION_INFO("Read from websocket: %d: %s", len, tmp);
+	json_object * jobj = json_tokener_parse(tmp);
+	if (jobj)
+	{
+		shared_ptr<Command> pCmd(new Command(jobj));
+	}	
 
 	return OCS_NEED_MORE_DATA;
 }

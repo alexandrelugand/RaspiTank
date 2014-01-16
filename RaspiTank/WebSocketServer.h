@@ -3,6 +3,8 @@
 #include "onion.h"
 #include <thread>
 
+#define WS_BUFFER 2048
+
 namespace RaspiTank
 {
 	class WebSocketServer : public Singleton<WebSocketServer>
@@ -15,6 +17,7 @@ namespace RaspiTank
 
 		thread listenerThread;
 		onion* o;
+		onion_websocket* ws;
 		static void Listener();
 		static void Shutdown(int signal);
 		static onion_connection_status OnConnect(void *data, onion_request *req, onion_response *res);
