@@ -1,4 +1,6 @@
 #include "Command.h"
+#include "log.h"
+#include "Utils.h"
 
 using namespace RaspiTank;
 
@@ -42,6 +44,34 @@ Command::Command(int cmdCode, int repeat, string msg)
 {
 	Init(CmdType::idle, repeat, msg);
 	cmd = cmdCode;
+}
+
+Command::Command(json_object* jobj)
+{
+	enum json_type type;
+	json_object_object_foreach(jobj, key, val)
+	{
+		string str = string_format("type: ");
+		type = json_object_get_type(val);
+		switch (type)
+		{
+		case json_type_null: str += "json_type_null";
+			break;
+		case json_type_boolean: str += "json_type_boolean";
+			break;
+		case json_type_double: str += "json_type_double";
+			break;
+		case json_type_int: str += "json_type_int";
+			break;
+		case json_type_object: str += "json_type_object";
+			break;
+		case json_type_array: str += "json_type_array";
+			break;
+		case json_type_string: str += "json_type_string";
+			break;
+		}
+		INFO(str.c_str());
+	}
 }
 
 Command::~Command()

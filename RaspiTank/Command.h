@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <json/json.h>
 
 using namespace std;
 
@@ -15,9 +16,9 @@ namespace RaspiTank
 
 	enum Rotation : int
 	{
-		Left = 0,
-		Right = 1,
-		None = 2
+		None = 0,
+		Left = 1,
+		Right = 2		
 	};
 
 	enum Speed : int
@@ -90,6 +91,7 @@ namespace RaspiTank
 		Command(int cmdCode);
 		Command(int cmd, int repeat);
 		Command(int cmdCode, int repeat, string msg);
+		Command(json_object* jobj);
 		virtual ~Command();
 		
 		void Idle() { idle = true; }
