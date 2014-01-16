@@ -15,9 +15,6 @@ int main(int argc, char *argv[])
 	{		
 		Controller& ctrl = Controller::GetInstance();
 		ctrl.Initialize();
-		ctrl.StartEngine();	
-		ctrl.AddCmd(new Command(CmdType::machine_gun, 10));
-		ctrl.AddCmd(new Command(CmdType::neutral, 20));
 		for (;;)
 		{
 			string strCmd, strCount;
@@ -27,6 +24,19 @@ int main(int argc, char *argv[])
 			cin >> strCmd;
 			if (strCmd.compare("exit") == 0)
 				break;
+
+			if (strCmd.compare("start") == 0)
+			{
+				ctrl.StartEngine();
+				continue;
+			}
+
+			if (strCmd.compare("stop") == 0)
+			{
+				ctrl.StopEngine();
+				continue;
+			}
+
 			cmd = strtoul(strCmd.c_str(), NULL, 16);
 			printf("\t*** Cmd: 0x%08X\n", cmd);
 			printf("\t*** Enter frame count:\n");
