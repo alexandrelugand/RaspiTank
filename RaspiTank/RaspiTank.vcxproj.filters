@@ -17,10 +17,10 @@
       <UniqueIdentifier>{297c601c-7453-4054-8974-a6efd7a06212}</UniqueIdentifier>
       <Extensions>*.mak</Extensions>
     </Filter>
-    <Filter Include="Header files\Exception">
+    <Filter Include="Header files\Traces">
       <UniqueIdentifier>{cb1ce25c-c519-433e-b936-84112393a7d4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source files\Exception">
+    <Filter Include="Source files\Traces">
       <UniqueIdentifier>{55b4c905-81e0-4e8b-a298-8f30428a4d85}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -32,13 +32,16 @@
       <Filter>Source files</Filter>
     </ClCompile>
     <ClCompile Include="call_stack.cpp">
-      <Filter>Source files\Exception</Filter>
+      <Filter>Source files\Traces</Filter>
     </ClCompile>
     <ClCompile Include="Command.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
     <ClCompile Include="WebSocketServer.cpp">
       <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="log.cpp">
+      <Filter>Source files\Traces</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -61,19 +64,22 @@
       <Filter>Header files</Filter>
     </ClInclude>
     <ClInclude Include="call_stack.h">
-      <Filter>Header files\Exception</Filter>
+      <Filter>Header files\Traces</Filter>
     </ClInclude>
     <ClInclude Include="RTException.h">
-      <Filter>Header files\Exception</Filter>
+      <Filter>Header files\Traces</Filter>
     </ClInclude>
     <ClInclude Include="stack_exception.h">
-      <Filter>Header files\Exception</Filter>
+      <Filter>Header files\Traces</Filter>
     </ClInclude>
     <ClInclude Include="Command.h">
       <Filter>Header files</Filter>
     </ClInclude>
     <ClInclude Include="WebSocketServer.h">
       <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="log.h">
+      <Filter>Header files\Traces</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -64,6 +64,7 @@
     <ClCompile Include="call_stack.cpp" />
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="log.cpp" />
     <ClCompile Include="RaspiTank.cpp" />
     <ClCompile Include="WebSocketServer.cpp" />
   </ItemGroup>
@@ -76,6 +77,7 @@
     <ClInclude Include="call_stack.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="Controller.h" />
+    <ClInclude Include="log.h" />
     <ClInclude Include="RTException.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="stack_exception.h" />
