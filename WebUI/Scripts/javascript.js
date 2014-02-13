@@ -23,6 +23,8 @@ var CONTROL_PORT = 3000;
 // Port on which the mjpg-streamer webcam server runs
 var WEBCAM_PORT = 8080;
 
+var ws;
+
 // Executes on page load.
 $(function() {
     createImageLayer();
@@ -33,7 +35,7 @@ $(function() {
         ws.send(CmdInput.val());
     });
 
-    var ws = new WebSocket('ws://192.168.0.10:3000');
+    ws = new WebSocket('ws://192.168.0.10:3000');
     ws.onmessage = function (ev) {
         $("#Logger").append(ev.data + "\n");
         $('#Logger').scrollTop($('#Logger')[0].scrollHeight);

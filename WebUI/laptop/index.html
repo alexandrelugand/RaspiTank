@@ -7,6 +7,9 @@
       <script type="text/javascript" src="../Scripts/jquery-2.1.0.min.js"></script>
       <script type="text/javascript" src="../Scripts/mjpg-streamer.js"></script>
       <script type="text/javascript" src="../Scripts/javascript.js"></script>
+      <script type="text/javascript" src="../Scripts/Command.js"></script>
+      <script type="text/javascript" src="../Scripts/stick.js"></script>
+      <script type="text/javascript" src="../Scripts/analog_controller.js"></script>
   </head>
   <body>
     <div style="width:1250px; margin:0 auto;">
@@ -71,31 +74,40 @@
       </td></tr>
       <tr><td colspan="2"><div class="data"></div></td></tr></table>
     </div>
-      <center>
-        <textarea id="CmdInput" style="width:400px; height:400px;display:inline-block;">
-{
-    "Command":
-    {
-        "idle": false,
-        "ignition": false,
-        "neutral" : false,
-        "repeat" : 1,
-        "direction" : 0,
-        "dirspeed" : 0,
-        "rotation": 0,
-        "rotspeed" : 0,
-        "turrelRotation" : 0,
-        "canonElevation" : false,
-        "fire" : false,
-        "gun" : false,
-        "engineStart" : false,
-        "engineStop" : false
-    }
-}
-        </textarea>
-         <textarea id="Logger" style="width:800px; height:400px;display:inline-block;"></textarea>
-         <br />
-         <button id="CmdBtn">Send</button>
-</center>
+      <div>
+          <center>
+              <canvas id="controller" width="130" height="130"></canvas>
+              <p id="pointLabel"></p>
+          </center>
+      </div>
+      <div>
+          <center>
+              <textarea id="CmdInput" style="width:400px; height:400px;display:inline-block;">
+                  {
+                  "Command":
+                  {
+                  "idle": false,
+                  "ignition": false,
+                  "neutral" : false,
+                  "repeat" : 1,
+                  "direction" : 0,
+                  "dirspeed" : 0,
+                  "rotation": 0,
+                  "rotspeed" : 0,
+                  "turrelRotation" : 0,
+                  "canonElevation" : false,
+                  "fire" : false,
+                  "gun" : false,
+                  "engineStart" : false,
+                  "engineStop" : false
+                  }
+                  }
+              </textarea>
+              <textarea id="Logger" style="width:800px; height:400px;display:inline-block;"></textarea>
+              <br />
+              <button id="CmdBtn">Send</button>
+          </center>
+      </div>
+     
 </body>
 </html>

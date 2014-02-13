@@ -62,11 +62,14 @@
     <Content Include="img\left.png" />
     <Content Include="img\reverse.png" />
     <Content Include="img\right.png" />
+    <Content Include="img\stick.png" />
     <Content Include="img\stop.png" />
     <Content Include="img\turret-elev.png" />
     <Content Include="img\turret-left.png" />
     <Content Include="img\turret-right.png" />
     <Content Include="index.html" />
+    <Content Include="Scripts\analog_controller.js" />
+    <Content Include="Scripts\Command.js" />
     <Content Include="Scripts\javascript.js" />
     <Content Include="Scripts\mjpg-streamer.js" />
     <Content Include="laptop\index.html" />
@@ -74,6 +77,7 @@
     <None Include="Scripts\jquery-2.1.0.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.0.js" />
     <Content Include="Scripts\jquery-2.1.0.min.js" />
+    <Content Include="Scripts\stick.js" />
     <Content Include="sensordata.txt" />
     <Content Include="touch\index.html" />
     <Content Include="Web.config" />
