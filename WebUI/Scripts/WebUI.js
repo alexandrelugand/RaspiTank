@@ -22,26 +22,34 @@ var CONTROL_PORT = 3000;
 
 // Port on which the mjpg-streamer webcam server runs
 var WEBCAM_PORT = 8080;
+var WEBSOCKET_PORT = 3000;
 
-var ws;
+var webcamMng;
+var websocketMng;
+var command;
+
+function RequestCmd() {
+    if (command != null) {
+        var cmd = command;
+        command = null;
+        return cmd;
+    }      
+    return null;
+}
 
 // Executes on page load.
-$(function() {
-    createImageLayer();
-    setInterval(updateSensorData, 1000);
-    var CmdBtn = $('#CmdBtn');
-    CmdBtn.click(function () {
-        var CmdInput = $('#CmdInput');
-        ws.send(CmdInput.val());
-    });
+$(function () {
+    //webcamMng = new WebCamMng(window.location.host, WEBCAM_PORT);
+    webcamMng = new WebCamMng("192.168.0.10", WEBCAM_PORT, "#webcam");
+    webcamMng.Start();
 
-    ws = new WebSocket('ws://192.168.0.10:3000');
-    ws.onmessage = function (ev) {
-        $("#Logger").append(ev.data + "\n");
-        $('#Logger').scrollTop($('#Logger')[0].scrollHeight);
-        //alert(ev.data);
-    };
+    //websocketMng = new websocketMng(window.location.host, WEBSOCKET_PORT);
+    websocketMng = new WebSocketMng("192.168.0.10", WEBSOCKET_PORT, RequestCmd);
+    websocketMng.Start();
+    
+    //setInterval(updateSensorData, 1000);
 });
+
 
 // Sets a command to either true or false by name, e.g. to go forwards use
 // set('forwards', true) and to stop going forwards, use set('forwards', false).

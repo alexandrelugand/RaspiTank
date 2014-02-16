@@ -18,21 +18,21 @@ var point;
 function draw() {
 	context.clearRect(0, 0, WIDTH, HEIGHT);
 	drawStick();
-	drawPoint();
+	//drawPoint();
 };
 
-function drawPoint () {
-	context.save();
+//function drawPoint () {
+//	context.save();
 
-	context.beginPath();
-	context.arc(point.x, point.y, point.radius, 0, (Math.PI * 2), true);
+//	context.beginPath();
+//	context.arc(point.x, point.y, point.radius, 0, (Math.PI * 2), true);
 
-	context.lineWidth = 3;
-	context.strokeStyle = "rgb(0, 200, 0)";
-	context.stroke();
+//	context.lineWidth = 3;
+//	context.strokeStyle = "rgb(0, 200, 0)";
+//	context.stroke();
 
-	context.restore();
-};
+//	context.restore();
+//};
 
 function drawStick () {
 	context.save();
@@ -41,16 +41,20 @@ function drawStick () {
 	context.drawImage(
 		image,
 		0, 0,
-		88, 88,
-		stick.limit.x - (limitSize / 2), stick.limit.y - (limitSize / 2),
-		limitSize, limitSize
-	);
+		WIDTH, WIDTH,
+        0, 0,
+        WIDTH, WIDTH
+    );
+    //,
+	//	stick.limit.x - (limitSize / 2), stick.limit.y - (limitSize / 2),
+	//	limitSize, limitSize
+	//);
 
 	// Input
-	var knobSize = 60;
+	var knobSize = 91;
 	context.drawImage(
 		image,
-		90, 14,
+		337, 83,
 		knobSize, knobSize,
 		stick.input.x - (knobSize / 2), stick.input.y - (knobSize / 2),
 		knobSize, knobSize
@@ -63,10 +67,20 @@ function init () {
 	stick.setLimitXY(BUFFER, (HEIGHT - BUFFER));
 	stick.setInputXY(BUFFER, (HEIGHT - BUFFER));
 
+	$("#controller").mouseover(function (e) {
+	    stick.enabled = true;
+    });
+
+	$("#controller").mouseout(function (e) {
+	    stick.enabled = false;
+    });
+
 	$(document).mousedown(function (e) {
-		e.preventDefault();
-		stick.setInputXY(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
-		stick.active = true;
+	    e.preventDefault();
+	    if (stick.enabled) {
+		    stick.setInputXY(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
+	        stick.active = true;
+	    }
 	});
 
 	$(document).mousemove(function (e) {
@@ -81,9 +95,9 @@ function init () {
 		stick.setInputXY(stick.limit.x, stick.limit.y);
 	});
 
-	image.src = "../img/stick.png";
+	image.src = "../img/left_stick.png";
 	image.onload = function () {
-		setInterval(main, 500);
+		setInterval(main, 20);
 	};
 };
 
@@ -147,51 +161,46 @@ function update (elapsed) {
 	var X = ((point.x - stick.limit.x) / inputSize) * 100;
 	var Y = ((point.y - stick.limit.y) / inputSize) * 100;
 
+	//var X = point.x;
+    //var Y = point.y;
+	var hint = 2;
+
 	var cmd = null;
 	if (X > 50)
 	{
-	    if (cmd == null)
-	        cmd = new Command();
-	    cmd.repeat = 20;
-	    cmd.turrelRotation = 2;
+	    if (command == null)
+	        command = new Command();
+	    command.repeat = hint;
+	    command.turrelRotation = 2;
 	}
 	else if (X < -50)
 	{
-	    if (cmd == null)
-	        cmd = new Command();
-	    cmd.repeat = 20;
-	    cmd.turrelRotation = 1;
+	    if (command == null)
+	        command = new Command();
+	    command.repeat = hint;
+	    command.turrelRotation = 1;
 	}
     
 	if (Y > 50) {
-	    if (cmd == null)
-	        cmd = new Command();
-	    cmd.repeat = 20;
-	    cmd.canonElevation = true;
+	    if (command == null)
+	        command = new Command();
+	    command.repeat = hint * 2;
+	    command.canonElevation = true;
 	}
-    
-	if (ws != null && cmd != null)
-	{
-	    var jsonCmd = cmd.toJSON();
-	    ws.send(jsonCmd);
-	    $('#CmdInput').text(jsonCmd);
-	}
-	else
-	    $('#CmdInput').text("");
 
-	$("#pointLabel").html("<h1>X: " + X + "</h1><h1>Y: " + Y + "</h1>");
+	$("#pointLabel").html("<h1>X: " + Number(X).toFixed(1) + "</h1><h1>Y: " + Number(Y).toFixed(1) + "</h1>");
 };
 
 $(function() {
     canvas = $("#controller")[0];
     context = canvas.getContext("2d");
-    BUFFER = 65;
+    BUFFER = 128;
     WIDTH = canvas.offsetWidth;
     HEIGHT = canvas.offsetHeight;
 
     image = new Image();
-    limitSize = 88;
-    inputSize = 20;
+    limitSize = 60;
+    inputSize = 60;
     lastTime = Date.now();
     stick = new Stick(inputSize);
     threshold = 2;

@@ -1,4 +1,5 @@
-function Stick (maxLength, active) {
+function Stick(maxLength, active) {
+    this.enabled = false;
 	this.active = active;
 	this.atLimit = false;
 	this.length = 1;

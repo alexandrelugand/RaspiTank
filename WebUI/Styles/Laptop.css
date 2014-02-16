@@ -1,0 +1,30 @@
+﻿@media screen and (min-width: 1280px) {
+    body {
+        width: 1280px;
+        margin:0 auto;
+        border: solid;
+        border-width:1px;
+        border-color: black;
+    }
+
+    #webcam {
+         width:640px;
+         height:480px;
+         background-color:gray;
+         margin: 0px;
+         padding: 0px;
+         display:inline-block;
+    }
+
+    #Logger {
+         width:635px;
+         height:480px;
+         margin: 0px;
+         padding: 0px;
+         border-width:0px;
+         display:inline-block;
+    }
+}
+
+
+

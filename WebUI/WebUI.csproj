@@ -59,6 +59,7 @@
   <ItemGroup>
     <Content Include="img\fire.png" />
     <Content Include="img\forward.png" />
+    <Content Include="Styles\Laptop.css" />
     <Content Include="img\left.png" />
     <Content Include="img\reverse.png" />
     <Content Include="img\right.png" />
@@ -68,16 +69,18 @@
     <Content Include="img\turret-left.png" />
     <Content Include="img\turret-right.png" />
     <Content Include="index.html" />
-    <Content Include="Scripts\analog_controller.js" />
+    <Content Include="Scripts\Gamepad.js" />
     <Content Include="Scripts\Command.js" />
-    <Content Include="Scripts\javascript.js" />
-    <Content Include="Scripts\mjpg-streamer.js" />
+    <Content Include="Scripts\WebcamMng.js" />
+    <Content Include="Scripts\WebSocketWorker.js" />
+    <Content Include="Scripts\WebUI.js" />
     <Content Include="laptop\index.html" />
     <Content Include="packages.config" />
     <None Include="Scripts\jquery-2.1.0.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.0.js" />
     <Content Include="Scripts\jquery-2.1.0.min.js" />
-    <Content Include="Scripts\stick.js" />
+    <Content Include="Scripts\Stick.js" />
+    <Content Include="Scripts\WebSocketMng.js" />
     <Content Include="sensordata.txt" />
     <Content Include="touch\index.html" />
     <Content Include="Web.config" />
