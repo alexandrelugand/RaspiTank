@@ -239,6 +239,7 @@ static void write_header(onion_response *res, const char *key, const char *value
 #define CONNECTION_KEEP_ALIVE "Connection: Keep-Alive\r\n"
 #define CONNECTION_CHUNK_ENCODING "Transfer-Encoding: chunked\r\n"
 #define CONNECTION_UPGRADE "Connection: Upgrade\r\n"
+#define CONNECTION_ACCESS_CONTROL_ALLOW_ORIGN "Access-Control-Allow-Origin: *\r\n"
 
 /**
  * @short Writes all the header to the given response
@@ -261,7 +262,7 @@ int onion_response_write_headers(onion_response *res){
 	
 	if (res->request->flags&OR_HTTP11){
 		onion_response_printf(res, "HTTP/1.1 %d %s\r\n",res->code, onion_response_code_description(res->code));
-		//ONION_DEBUG("Response header: HTTP/1.1 %d %s\n",res->code, onion_response_code_description(res->code));
+		//ONION_DEBUG("Response header: HTTP/1.1 %d %s\n",res->code, onion_response_code_description(res->code));		
 		if (!(res->flags&OR_LENGTH_SET)  && onion_request_keep_alive(res->request)){
 			onion_response_write(res, CONNECTION_CHUNK_ENCODING, sizeof(CONNECTION_CHUNK_ENCODING)-1);
 			chunked=1;
@@ -273,6 +274,8 @@ int onion_response_write_headers(onion_response *res){
 		if (res->flags&OR_LENGTH_SET) // On HTTP/1.0, i need to state it. On 1.1 it is default.
 			onion_response_write(res, CONNECTION_KEEP_ALIVE, sizeof(CONNECTION_KEEP_ALIVE)-1);
 	}
+
+	onion_response_printf(res, CONNECTION_ACCESS_CONTROL_ALLOW_ORIGN, sizeof(CONNECTION_ACCESS_CONTROL_ALLOW_ORIGN)-1);
 	
 	if (!(res->flags&OR_LENGTH_SET) && !chunked && !(res->flags&OR_CONNECTION_UPGRADE))
 		onion_response_write(res, CONNECTION_CLOSE, sizeof(CONNECTION_CLOSE)-1);
