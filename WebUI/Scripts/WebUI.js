@@ -27,6 +27,7 @@ var WEBSOCKET_PORT = 3000;
 var webcamMng;
 var websocketMng;
 var command;
+var turrelGmPd;
 
 function RequestCmd() {
     if (command != null) {
@@ -46,6 +47,8 @@ $(function () {
     //websocketMng = new websocketMng(window.location.host, WEBSOCKET_PORT);
     websocketMng = new WebSocketMng("192.168.0.10", WEBSOCKET_PORT, RequestCmd);
     websocketMng.Start();
+
+    turrelGmPd = new GamePad($("#controller"), "../img/left_stick.png", 60, 60, 2, 20, 15, { X: 337, Y: 83, Size: 91 }, true);
     
     //setInterval(updateSensorData, 1000);
 });

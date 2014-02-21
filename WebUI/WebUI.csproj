@@ -59,6 +59,7 @@
   <ItemGroup>
     <Content Include="img\fire.png" />
     <Content Include="img\forward.png" />
+    <Content Include="img\left_stick.png" />
     <Content Include="Styles\Laptop.css" />
     <Content Include="img\left.png" />
     <Content Include="img\reverse.png" />

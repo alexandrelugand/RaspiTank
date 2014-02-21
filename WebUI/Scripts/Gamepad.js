@@ -1,168 +1,155 @@
 /// <reference path="Command.js" /> 
 /// <reference path="javascript.js" /> 
 
-var canvas;
-var context;
-var BUFFER;
-var WIDTH;
-var HEIGHT;
+//var canvas;
+//var context;
+//var BUFFER;
+//var WIDTH;
+//var HEIGHT;
 
-var image;
-var limitSize;
-var inputSize;
-var lastTime;
-var stick;
-var threshold;
-var point;
+//var image;
+//var limitSize;
+//var inputSize;
+//var lastTime;
+//var stick;
+//var threshold;
+//var point;
 
-function draw() {
-	context.clearRect(0, 0, WIDTH, HEIGHT);
-	drawStick();
-	//drawPoint();
-};
+function GamePad(ctrl, imgsrc, inputSize, limitSize, threshold, pointRadius, pointSpeed, knobe, debug)
+{
+    this.ctrl = ctrl;
+    this.context = ctrl[0].getContext("2d");    
+    this.width = ctrl[0].offsetWidth;
+    this.height = ctrl[0].offsetHeight;
+    this.buffer = parseInt(this.width / 2 );
 
-//function drawPoint () {
-//	context.save();
+    this.image = new Image();
+    this.limitSize = limitSize;
+    this.inputSize = inputSize;
+    this.lastTime = Date.now();
+    this.stick = new Stick(inputSize, false);
+    this.threshold = threshold;
+    this.imgsrc = imgsrc;
+    this.point = {
+        radius: pointRadius,
+        speed: pointSpeed,
+        x: (this.width / 2),
+        y: (this.height / 2)
+    };
+    this.knobe = knobe;
+    this.debug = debug;
+    if (this.debug) {
+        this.DebugCtrl = "Label" + (1 + Math.floor(Math.random() * 10));    
+        $('<p id="' + this.DebugCtrl + '"></p>').insertAfter(this.ctrl);
+    }
 
-//	context.beginPath();
-//	context.arc(point.x, point.y, point.radius, 0, (Math.PI * 2), true);
+    this.Init();
+}
 
-//	context.lineWidth = 3;
-//	context.strokeStyle = "rgb(0, 200, 0)";
-//	context.stroke();
+GamePad.prototype.Draw = function() {
+	this.context.clearRect(0, 0, this.width, this.height);
+	this.DrawStick();
+}
 
-//	context.restore();
-//};
-
-function drawStick () {
-	context.save();
+GamePad.prototype.DrawStick = function() {
+	this.context.save();
 
 	// Limit
-	context.drawImage(
-		image,
+	this.context.drawImage(
+		this.image,
 		0, 0,
-		WIDTH, WIDTH,
+		this.width, this.width,
         0, 0,
-        WIDTH, WIDTH
+        this.width, this.width
     );
-    //,
-	//	stick.limit.x - (limitSize / 2), stick.limit.y - (limitSize / 2),
-	//	limitSize, limitSize
-	//);
 
 	// Input
-	var knobSize = 91;
-	context.drawImage(
-		image,
-		337, 83,
-		knobSize, knobSize,
-		stick.input.x - (knobSize / 2), stick.input.y - (knobSize / 2),
-		knobSize, knobSize
+	this.context.drawImage(
+		this.image,
+		this.knobe.X, this.knobe.Y,
+		this.knobe.Size, this.knobe.Size,
+		this.stick.input.x - (this.knobe.Size / 2), this.stick.input.y - (this.knobe.Size / 2),
+		this.knobe.Size, this.knobe.Size
 	);
 
-	context.restore();
-};
+	this.context.restore();
+}
 
-function init () {
-	stick.setLimitXY(BUFFER, (HEIGHT - BUFFER));
-	stick.setInputXY(BUFFER, (HEIGHT - BUFFER));
+GamePad.prototype.Init = function () {
+    this.stick.setLimitXY(this.buffer, (this.height - this.buffer));
+	this.stick.setInputXY(this.buffer, (this.height - this.buffer));
 
-	$("#controller").mouseover(function (e) {
-	    stick.enabled = true;
+	var that = this;
+	this.ctrl.mouseover(function (e) {
+	    that.stick.enabled = true;
     });
 
-	$("#controller").mouseout(function (e) {
-	    stick.enabled = false;
+	this.ctrl.mouseout(function (e) {
+	    that.stick.enabled = false;
     });
 
 	$(document).mousedown(function (e) {
 	    e.preventDefault();
-	    if (stick.enabled) {
-		    stick.setInputXY(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
-	        stick.active = true;
+	    if (that.stick.enabled) {
+	        that.stick.setInputXY(e.pageX - that.ctrl[0].offsetLeft, e.pageY - that.ctrl[0].offsetTop);
+	        that.stick.active = true;
 	    }
 	});
 
 	$(document).mousemove(function (e) {
 		e.preventDefault();
-		if (stick.active) {
-		    stick.setInputXY(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
+		if (that.stick.active) {
+		    that.stick.setInputXY(e.pageX - that.ctrl[0].offsetLeft, e.pageY - that.ctrl[0].offsetTop);
 		}
 	});
 
 	$(document).mouseup(function (e) {
-		stick.active = false;
-		stick.setInputXY(stick.limit.x, stick.limit.y);
+	    that.stick.active = false;
+	    that.stick.setInputXY(that.stick.limit.x, that.stick.limit.y);
 	});
 
-	image.src = "../img/left_stick.png";
-	image.onload = function () {
-		setInterval(main, 20);
+	this.image.src = this.imgsrc;
+    this.image.onload = function () {
+        setInterval(function() {
+	        var now = Date.now();
+            var elapsed = (now - that.lastTime);
+
+            that.Update(elapsed);
+            that.Draw();
+
+            that.lastTime = now;
+        }, 20);
 	};
-};
+}
 
-function main () {
-	var now = Date.now();
-	var elapsed = (now - lastTime);
+GamePad.prototype.Update = function (elapsed) {
+	this.stick.update();
 
-	update(elapsed);
-	draw();
+	if (this.stick.active) {
+	    this.point.x = this.stick.input.x;
+	    this.point.y = this.stick.input.y;
 
-	lastTime = now;
-};
-
-function update (elapsed) {
-	stick.update();
-
-	if (stick.active) {
-	//if (stick.active && (stick.length > threshold)) {
-		//point.x += (
-		//	(stick.length * stick.normal.x)
-		//	* point.speed
-		//	* (elapsed / 1000)
-		//);
-	    point.x = stick.input.x;
-		//point.y += (
-		//	(stick.length * stick.normal.y)
-		//	* point.speed
-		//	* (elapsed / 1000)
-		//);
-	    point.y = stick.input.y;
-
-	    if (point.x < 0) {
-	        point.x = 0;
-	    } else if (point.x > WIDTH) {
-	        point.x = WIDTH;
+	    if (this.point.x < 0) {
+	        this.point.x = 0;
+	    } else if (this.point.x > this.width) {
+	        this.point.x = this.width;
 	    }
 
-	    if (point.y < 0) {
-	        point.y = 0;
-	    } else if (point.y > HEIGHT) {
-	        point.y = HEIGHT;
+	    if (this.point.y < 0) {
+	        this.point.y = 0;
+	    } else if (this.point.y > this.height) {
+	        this.point.y = this.height;
 	    }
-
-		//if (point.x < point.radius) {
-		//	point.x = point.radius;
-		//} else if (point.x > (WIDTH - point.radius)) {
-		//	point.x = (WIDTH - point.radius);
-		//}
-		//if (point.y < point.radius) {
-		//	point.y = point.radius;
-		//} else if (point.y > (HEIGHT - point.radius)) {
-		//	point.y = (HEIGHT - point.radius);
-		//}
 	}
 	else
 	{
-	    point.x = stick.limit.x;
-	    point.y = stick.limit.y;
+	    this.point.x = this.stick.limit.x;
+	    this.point.y = this.stick.limit.y;
 	}
 
-	var X = ((point.x - stick.limit.x) / inputSize) * 100;
-	var Y = ((point.y - stick.limit.y) / inputSize) * 100;
+	var X = ((this.point.x - this.stick.limit.x) / this.inputSize) * 100;
+	var Y = ((this.point.y - this.stick.limit.y) / this.inputSize) * 100;
 
-	//var X = point.x;
-    //var Y = point.y;
 	var hint = 2;
 
 	var cmd = null;
@@ -188,28 +175,7 @@ function update (elapsed) {
 	    command.canonElevation = true;
 	}
 
-	$("#pointLabel").html("<h1>X: " + Number(X).toFixed(1) + "</h1><h1>Y: " + Number(Y).toFixed(1) + "</h1>");
-};
-
-$(function() {
-    canvas = $("#controller")[0];
-    context = canvas.getContext("2d");
-    BUFFER = 128;
-    WIDTH = canvas.offsetWidth;
-    HEIGHT = canvas.offsetHeight;
-
-    image = new Image();
-    limitSize = 60;
-    inputSize = 60;
-    lastTime = Date.now();
-    stick = new Stick(inputSize);
-    threshold = 2;
-    point = {
-        radius: 20,
-        speed: 15,
-        x: (WIDTH / 2),
-        y: (HEIGHT / 2)
-    };
-
-    init();
-});
+	if (this.debug) {
+	    $("#" + this.DebugCtrl).html("<h1>X: " + Number(X).toFixed(1) + "</h1><h1>Y: " + Number(Y).toFixed(1) + "</h1>");
+	}	
+}
