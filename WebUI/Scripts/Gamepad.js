@@ -1,5 +1,6 @@
 /// <reference path="Command.js" /> 
 /// <reference path="javascript.js" /> 
+/// <reference path="hammer.js" />
 
 //var canvas;
 //var context;
@@ -15,7 +16,7 @@
 //var threshold;
 //var point;
 
-function GamePad(ctrl, imgsrc, inputSize, limitSize, threshold, pointRadius, pointSpeed, knobe, debug)
+function GamePad(ctrl, imgsrc, inputSize, limitSize, threshold, pointRadius, pointSpeed, knobe, updateCallback, debug)
 {
     this.ctrl = ctrl;
     this.context = ctrl[0].getContext("2d");    
@@ -37,6 +38,7 @@ function GamePad(ctrl, imgsrc, inputSize, limitSize, threshold, pointRadius, poi
         y: (this.height / 2)
     };
     this.knobe = knobe;
+    this.updateCallback = updateCallback;
     this.debug = debug;
     if (this.debug) {
         this.DebugCtrl = "Label" + (1 + Math.floor(Math.random() * 10));    
@@ -80,34 +82,42 @@ GamePad.prototype.Init = function () {
 	this.stick.setInputXY(this.buffer, (this.height - this.buffer));
 
 	var that = this;
-	this.ctrl.mouseover(function (e) {
+
+
+	this.ctrl.hammer({
+	    prevent_default: true,
+	    no_mouseevents: true
+	});
+
+	//Hammer(this.ctrl[0], {
+	//    prevent_default: true,
+	//    no_mouseevents: true
+	//});
+
+	this.ctrl.hammer().on('touch', function (event) {
 	    that.stick.enabled = true;
-    });
-
-	this.ctrl.mouseout(function (e) {
+	})
+    .on('release', function (event) {
 	    that.stick.enabled = false;
+    })
+    .on('dragstart', function (event) {
+        event.preventDefault();
+        if (that.stick.enabled) {
+            that.stick.setInputXY(event.gesture['center'].pageX - that.ctrl[0].offsetLeft, event.gesture['center'].pageY - that.ctrl[0].offsetTop);
+            that.stick.active = true;
+        }
+    })
+    .on('drag', function (event) {
+        event.preventDefault();
+        if (that.stick.active) {
+            that.stick.setInputXY(event.gesture['center'].pageX - that.ctrl[0].offsetLeft, event.gesture['center'].pageY - that.ctrl[0].offsetTop);
+        }
+    })
+    .on('dragend', function (event) {
+        that.stick.active = false;
+        that.stick.setInputXY(that.stick.limit.x, that.stick.limit.y);
     });
-
-	$(document).mousedown(function (e) {
-	    e.preventDefault();
-	    if (that.stick.enabled) {
-	        that.stick.setInputXY(e.pageX - that.ctrl[0].offsetLeft, e.pageY - that.ctrl[0].offsetTop);
-	        that.stick.active = true;
-	    }
-	});
-
-	$(document).mousemove(function (e) {
-		e.preventDefault();
-		if (that.stick.active) {
-		    that.stick.setInputXY(e.pageX - that.ctrl[0].offsetLeft, e.pageY - that.ctrl[0].offsetTop);
-		}
-	});
-
-	$(document).mouseup(function (e) {
-	    that.stick.active = false;
-	    that.stick.setInputXY(that.stick.limit.x, that.stick.limit.y);
-	});
-
+    
 	this.image.src = this.imgsrc;
     this.image.onload = function () {
         setInterval(function() {
@@ -118,7 +128,7 @@ GamePad.prototype.Init = function () {
             that.Draw();
 
             that.lastTime = now;
-        }, 20);
+        }, 5);
 	};
 }
 
@@ -147,35 +157,11 @@ GamePad.prototype.Update = function (elapsed) {
 	    this.point.y = this.stick.limit.y;
 	}
 
-	var X = ((this.point.x - this.stick.limit.x) / this.inputSize) * 100;
-	var Y = ((this.point.y - this.stick.limit.y) / this.inputSize) * 100;
+	var x = ((this.point.x - this.stick.limit.x) / this.inputSize) * 100;
+	var y = ((this.point.y - this.stick.limit.y) / this.inputSize) * 100;
 
-	var hint = 2;
-
-	var cmd = null;
-	if (X > 50)
-	{
-	    if (command == null)
-	        command = new Command();
-	    command.repeat = hint;
-	    command.turrelRotation = 2;
+	if (this.updateCallback != null) {
+	    var event = { X: x, Y: y };
+	    this.updateCallback(event);
 	}
-	else if (X < -50)
-	{
-	    if (command == null)
-	        command = new Command();
-	    command.repeat = hint;
-	    command.turrelRotation = 1;
-	}
-    
-	if (Y > 50) {
-	    if (command == null)
-	        command = new Command();
-	    command.repeat = hint * 2;
-	    command.canonElevation = true;
-	}
-
-	if (this.debug) {
-	    $("#" + this.DebugCtrl).html("<h1>X: " + Number(X).toFixed(1) + "</h1><h1>Y: " + Number(Y).toFixed(1) + "</h1>");
-	}	
 }

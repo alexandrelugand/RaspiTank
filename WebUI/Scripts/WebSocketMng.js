@@ -2,6 +2,7 @@
     this.IP = ip;
     this.Port = port;
     this.Callback = callback;
+    this.Worker = null;
 };
 
 WebSocketMng.prototype.Start = function () {
@@ -16,19 +17,13 @@ WebSocketMng.prototype.Start = function () {
     };
 
     this.Worker.onmessage = function (e) {
-        if (e.data.Action == "RequestCmd") {
-            if (wsm.Callback != null) {
-                var cmd = wsm.Callback();
-                if(cmd != null) {
-                    var jcmd = cmd.toJSON();
-                    var data = { IP: wsm.IP, Port: wsm.Port, Cmd: jcmd };
-                    this.postMessage(data);
-                }
+        if (wsm.Callback != null) {
+            var cmd = wsm.Callback(e);
+            if (cmd != null) {
+                var jcmd = cmd.toJSON();
+                var data = { IP: wsm.IP, Port: wsm.Port, Cmd: jcmd };
+                this.postMessage(data);
             }
-        }
-        else {
-            $("#Logger").append(e.data.Msg + "\n");
-            $('#Logger').scrollTop($('#Logger')[0].scrollHeight);
         }
     };
 }
@@ -39,4 +34,15 @@ WebSocketMng.prototype.Stop = function () {
 
     this.Worker.terminate();
     this.Worker = null;
+}
+
+WebSocketMng.prototype.SendCmd = function (cmd) {
+    if (this.Worker == null)
+        return
+
+    if (cmd != null) {
+        var jcmd = cmd.toJSON();
+        var data = { IP: wsm.IP, Port: wsm.Port, Cmd: jcmd };
+        this.postMessage(data);
+    }
 }
