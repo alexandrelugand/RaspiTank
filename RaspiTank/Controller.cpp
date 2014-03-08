@@ -162,9 +162,17 @@ void Controller::CommandSender(Controller* ctrl)
 				repeat = pCmd.get()->GetRepeat();
 				msg = pCmd.get()->GetMessage();
 				if (pCmd.get()->IsEngineStart())
+				{
 					ctrl->engineStarted = true;
-				else if(pCmd.get()->IsEngineStop())
+					WebSocketServer& wss = WebSocketServer::GetInstance();
+					wss.SendMsg("ENGINE_STATUS", "start");
+				}
+				else if (pCmd.get()->IsEngineStop())
+				{
 					ctrl->engineStarted = false;
+					WebSocketServer& wss = WebSocketServer::GetInstance();
+					wss.SendMsg("ENGINE_STATUS", "stop");
+				}
 			}
 			catch (...) {}
 			ctrl->queueLock.unlock();
@@ -179,10 +187,6 @@ void Controller::CommandSender(Controller* ctrl)
 		else
 		{
 			continue;
-			/*Command pCmd(CmdType::idle);
-			cmd = pCmd.GetCmd();				
-			repeat = 1;
-			msg = "";*/
 		}
 				
 		if (!msg.empty())
@@ -255,7 +259,7 @@ void Controller::StopEngine()
 {
 	queueLock.lock();
 	AddCmd(CmdType::neutral, 40, "", false);
-	AddCmd(CmdType::ignition, 5, "", false);
+	AddCmd(CmdType::ignition, 20, "", false);
 	AddCmd(CmdType::engine_stop, 1, "Stopping engine...", false);
 	queueLock.unlock();
 

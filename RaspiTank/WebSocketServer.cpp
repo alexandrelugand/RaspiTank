@@ -74,7 +74,7 @@ onion_connection_status WebSocketServer::OnConnect(void *data, onion_request *re
 	wss.ws = onion_websocket_new(req, res);
 	if (!wss.ws)
 		return OCS_PROCESSED;
-	onion_websocket_printf(wss.ws, "Connected to RaspiTank. Waiting command...");
+	wss.Log("Connected to RaspiTank. Waiting command...");
 	onion_websocket_set_callback(wss.ws, WebSocketServer::OnMessage);
 
 	return OCS_WEBSOCKET;
@@ -82,10 +82,16 @@ onion_connection_status WebSocketServer::OnConnect(void *data, onion_request *re
 
 void WebSocketServer::Log(const string& log)
 {
+	SendMsg("LOG", log);
+}
+
+void WebSocketServer::SendMsg(const string& action, const string& msg)
+{
 	if (ws != NULL)
 	{
 		wsLock.lock();
-		onion_websocket_printf(ws, log.c_str());
+		string strMsg = "$" + action + "$_" + msg;
+		onion_websocket_printf(ws, strMsg.c_str());
 		wsLock.unlock();
 	}
 }

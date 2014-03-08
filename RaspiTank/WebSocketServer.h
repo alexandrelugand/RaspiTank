@@ -30,6 +30,7 @@ namespace RaspiTank
 		void Listen();
 		void Stop();
 		void Log(const string& log);
+		void SendMsg(const string& action, const string& msg);
 	};
 }
 
