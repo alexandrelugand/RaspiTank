@@ -1,30 +1,144 @@
 ﻿@media screen and (min-width: 1280px) {
     body {
         width: 1280px;
+        height: 665px;
         margin:0 auto;
         border: solid;
         border-width:1px;
-        border-color: black;
+        border-color: black;        
+    }
+
+    #main {
+        width: 1280px;
+        height: 665px;
+        margin: 0px;
+        padding: 0px;
+        font-size : 0;
+        background-image: url('../img/background2.jpg');
+        overflow:hidden;
+        position: relative;
+    }
+
+    .gamepad {      
+         display:inline-block;         
+         margin: 0px;     
+         position: fixed; 
     }
 
     #webcam {
          width:640px;
          height:480px;
-         background-color:gray;
+         background-color:transparent;
          margin: 0px;
-         padding: 0px;
-         display:inline-block;
+         display:inline-block;    
+         padding-right: 64px;
+         padding-left: 64px;              
+    }
+
+    #webcam img {
+         border:solid;
+         border-width:1px;   
     }
 
     #Logger {
-         width:635px;
-         height:480px;
-         margin: 0px;
+         width:100%;
+         height:144px;         
          padding: 0px;
          border-width:0px;
          display:inline-block;
+         resize: none; 
+         overflow: auto;
+    }
+
+    #webcam_panel {
+         margin: 0px;
+         display:inline-block;       
+         width:768px;
+         height:480px;
+    }
+
+    /*#startbutton {
+        display: block;
+        float:left;
+    }*/
+
+    #side_left {
+        width: 256px;
+        height: 480px;
+        margin: 0px;
+        padding: 0px;
+        display: inline-block;
+        vertical-align:top;
+    }
+
+    #side_left div:first-child {
+          padding-top:224px;
+    }
+
+    #side_right {
+        width: 256px;
+        height: 480px;
+        margin: 0px;
+        padding: 0px;
+        display: inline-block;
+        vertical-align:top;
+    }
+
+     #side_right div:first-child {
+          padding-top:224px;
+    }
+
+    #log_panel {
+        width: 1280px;
+        height: 320px;    
+        position:absolute;
+        float:right;
+        top:625px;  
+        left:0px;
+        font-size: initial;
+        z-index: 5;
+    }
+
+    #log_panel div:first-child {        
+        height: 40px;
+        background-color:black;
+        text-align: center;
+        font-weight: bold;
+        color: silver;
+        font-family:Calibri;
+        vertical-align: middle;
+        line-height: 40px;   
+    }
+
+    #bottom {
+        width:1280px;
+        height: 165px;   
+        line-height: 165px;            
+    }
+
+    #bottom img {
+        vertical-align:middle;
+    }
+
+    #firebutton {
+        background-image: url('../img/fire.png');
+        display: inline-block;
+        width: 116px;
+        height: 116px;
+        margin: 6px;
+        border-radius: 10px;
+        line-height: 128px;   
+        vertical-align:middle;
+    }
+
+     #gunbutton {
+        background-image: url('../img/gun.png');
+        display: inline-block;
+        width: 116px;
+        height: 116px;
+        margin: 6px;
+        border-radius: 10px;
+        line-height: 128px;   
+        vertical-align:middle;
     }
 }
-
-
-

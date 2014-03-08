@@ -1,18 +1,36 @@
-﻿<!-- Raspberry Tank Web UI, February 2013, by Ian Renton.  Released under the BSD licence. -->
-<!DOCTYPE HTML> 
+﻿<!DOCTYPE HTML> 
 <html>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <head>
     <title>Raspberry Tank</title>      
       <link rel="stylesheet" media="screen and (min-width: 1280px)" href="../Styles/Laptop.css" type="text/css" />
   </head>
-  <body>
-      <div id="webcam"></div>
-      <textarea id="Logger"></textarea>    
-      <div>
-          <canvas id="controller" width="256" height="256"></canvas>         
+  <body>        
+      <div id="main">
+          <div id="side_left">
+              <div><canvas id="turrel-ctrl" class="gamepad" width="256" height="256"></canvas></div>
+          </div>
+          <div id="webcam_panel">
+              <div id="webcam"></div>
+          </div>
+          <div id="side_right">
+              <div><canvas id="move-ctrl" class="gamepad" width="256" height="256"></canvas></div>
+          </div>    
+          <div id="bottom">
+              <img id="startbutton" src="../img/StartStop_Off.png" width="128" height="128" />
+              <img id="emergencybutton" src="../img/emergency.png" width="128" height="128" />
+              <div id="firebutton"></div>
+              <div id="gunbutton"></div>
+          </div>   
+          <div id="log_panel">
+              <div>Console</div>
+              <div><textarea readonly id="Logger"></textarea></div>
+          </div>    
       </div>
+     
       <script src="../Scripts/jquery-2.1.0.min.js"></script>
+      <script src="../Scripts/jquery.hammer.min.js"></script>
       <script src="../Scripts/WebcamMng.js"></script>
       <script src="../Scripts/WebSocketMng.js"></script>
       <script src="../Scripts/Command.js"></script>
