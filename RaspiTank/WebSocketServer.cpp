@@ -91,7 +91,11 @@ void WebSocketServer::SendMsg(const string& action, const string& msg)
 	{
 		wsLock.lock();
 		string strMsg = "$" + action + "$_" + msg;
-		onion_websocket_printf(ws, strMsg.c_str());
+		try
+		{
+			onion_websocket_printf(ws, strMsg.c_str());
+		}
+		catch (...) {}
 		wsLock.unlock();
 	}
 }
@@ -119,8 +123,8 @@ onion_connection_status WebSocketServer::OnMessage(void *data, onion_websocket *
 
 		if (len <= 0)
 			ERROR("Error reading data: %d: %s (%d)", errno, strerror(errno), data_ready_len);
-		else
-			INFO("Read from websocket: %d:\n%s", len, cmd.c_str());
+	/*	else
+			INFO("Read from websocket: %d:\n%s", len, cmd.c_str());*/
 
 		if (jobj != NULL)
 		{

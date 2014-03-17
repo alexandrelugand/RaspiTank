@@ -71,7 +71,7 @@ namespace RaspiTank
 		bool fire;
 		bool gun;
 		int cmd;
-		string message;
+		//string message;
 		bool engineStart;
 		bool engineStop;
 
@@ -109,7 +109,7 @@ namespace RaspiTank
 		void Gun() { gun = true; }
 
 		const int GetCmd();
-		const string& GetMessage() { return message; }
+		//const string& GetMessage() { return message; }
 
 		const bool IsEngineStart() { return engineStart; }
 		const bool IsEngineStop() { return engineStop; }

@@ -149,7 +149,7 @@ void Controller::CommandSender(Controller* ctrl)
 	{
 		int cmd = 0;
 		int repeat = 1;
-		string msg;
+		//string msg;
 
 		if (!ctrl->cmdQueue.empty())
 		{
@@ -160,15 +160,17 @@ void Controller::CommandSender(Controller* ctrl)
 				ctrl->cmdQueue.pop();
 				cmd = pCmd.get()->GetCmd();
 				repeat = pCmd.get()->GetRepeat();
-				msg = pCmd.get()->GetMessage();
+				//msg = pCmd.get()->GetMessage();
 				if (pCmd.get()->IsEngineStart())
 				{
+					INFO("Starting engine ...");
 					ctrl->engineStarted = true;
 					WebSocketServer& wss = WebSocketServer::GetInstance();
 					wss.SendMsg("ENGINE_STATUS", "start");
 				}
 				else if (pCmd.get()->IsEngineStop())
 				{
+					INFO("Stopping engine ...");
 					ctrl->engineStarted = false;
 					WebSocketServer& wss = WebSocketServer::GetInstance();
 					wss.SendMsg("ENGINE_STATUS", "stop");
@@ -182,15 +184,15 @@ void Controller::CommandSender(Controller* ctrl)
 			Command pCmd(CmdType::neutral);
 			cmd = pCmd.GetCmd();				
 			repeat = 1;
-			msg = "";
+			//msg = "";
 		}
 		else
 		{
 			continue;
 		}
 				
-		if (!msg.empty())
-			INFO("Send command: %s", msg.c_str());
+		/*if (!msg.empty())
+			INFO("Send command: %s", msg.c_str());*/
 
 		for (int i = 0; i < repeat; i++)
 			ctrl->SendCode(cmd);
