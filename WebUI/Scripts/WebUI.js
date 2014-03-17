@@ -33,8 +33,8 @@ function RequestCmd(e) {
         $('#Logger').scrollTop($('#Logger')[0].scrollHeight);
     }
     else if (e.data.Action == "ENGINE_STATUS") {
-        $("#Logger").append("Engine status changed: " + e.data.Msg + "\n");
-        $('#Logger').scrollTop($('#Logger')[0].scrollHeight);
+        //$("#Logger").append("Engine status changed: " + e.data.Msg + "\n");
+        //$('#Logger').scrollTop($('#Logger')[0].scrollHeight);
         engineState = e.data.Msg;
     }
     return null;
@@ -174,7 +174,7 @@ function UpdateTurrelGmPd(event) {
         command.turrelRotation = 1;
     }
 
-    if (event.Y > 50) {
+    if (event.Y > 50 || event.Y < -50) {
         if (command == null)
             command = new Command();
         command.repeat = hint * 2;
