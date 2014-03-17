@@ -128,7 +128,7 @@ GamePad.prototype.Init = function () {
             that.Draw();
 
             that.lastTime = now;
-        }, 5);
+        }, 1);
 	};
 }
 
