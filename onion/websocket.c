@@ -398,7 +398,9 @@ onion_connection_status onion_websocket_call(onion_websocket* ws)
 			if (ws->data_left==0)
 				if (onion_websocket_read_packet_header(ws)<0){
 					ONION_ERROR("Error reading websocket header");
-					return OCS_INTERNAL_ERROR;
+					onion_websocket_set_opcode(ws, OWS_CONNECTION_CLOSE);
+					return OCS_CLOSE_CONNECTION;
+					//return OCS_INTERNAL_ERROR;
 				}
 			
 			size_t last_d_l;
