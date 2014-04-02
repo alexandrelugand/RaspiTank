@@ -23,7 +23,7 @@ error:
 	$(error Invalid configuration, please check your inputs)
 endif
 
-SOURCEFILES := call_stack.cpp Command.cpp Controller.cpp log.cpp RaspiTank.cpp WebSocketServer.cpp
+SOURCEFILES := call_stack.cpp Command.cpp Controller.cpp I2C/HMC5883L.cpp I2C/I2Cdev.cpp I2C/MPU6050.cpp I2C/Sensors.cpp log.cpp RaspiTank.cpp Sync.cpp WebSocketServer.cpp
 EXTERNAL_LIBS := 
 EXTERNAL_LIBS_COPIED := $(foreach lib, $(EXTERNAL_LIBS),$(BINARYDIR)/$(notdir $(lib)))
 
@@ -129,3 +129,20 @@ $(BINARYDIR)/%.o : %.s $(all_make_files) |$(BINARYDIR)
 	$(CC) $(CFLAGS) $(ASFLAGS) -c $< -o $@ -lpthread -MD -MF $(@:.o=.dep)
 
 #VisualGDB: GeneratedRules				#<--- All lines below are auto-generated
+
+
+$(BINARYDIR)/HMC5883L.o : I2C/HMC5883L.cpp $(all_make_files) |$(BINARYDIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@ -lpthread -MD -MF $(@:.o=.dep)
+
+
+$(BINARYDIR)/I2Cdev.o : I2C/I2Cdev.cpp $(all_make_files) |$(BINARYDIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@ -lpthread -MD -MF $(@:.o=.dep)
+
+
+$(BINARYDIR)/MPU6050.o : I2C/MPU6050.cpp $(all_make_files) |$(BINARYDIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@ -lpthread -MD -MF $(@:.o=.dep)
+
+
+$(BINARYDIR)/Sensors.o : I2C/Sensors.cpp $(all_make_files) |$(BINARYDIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@ -lpthread -MD -MF $(@:.o=.dep)
+

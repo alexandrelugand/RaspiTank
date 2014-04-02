@@ -64,8 +64,13 @@
     <ClCompile Include="call_stack.cpp" />
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="I2C\HMC5883L.cpp" />
+    <ClCompile Include="I2C\I2Cdev.cpp" />
+    <ClCompile Include="I2C\MPU6050.cpp" />
+    <ClCompile Include="I2C\Sensors.cpp" />
     <ClCompile Include="log.cpp" />
     <ClCompile Include="RaspiTank.cpp" />
+    <ClCompile Include="Sync.cpp" />
     <ClCompile Include="WebSocketServer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -77,10 +82,15 @@
     <ClInclude Include="call_stack.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="Controller.h" />
+    <ClInclude Include="I2C\HMC5883L.h" />
+    <ClInclude Include="I2C\I2Cdev.h" />
+    <ClInclude Include="I2C\MPU6050.h" />
+    <ClInclude Include="I2C\Sensors.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="RTException.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="stack_exception.h" />
+    <ClInclude Include="Sync.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="WebSocketServer.h" />
   </ItemGroup>

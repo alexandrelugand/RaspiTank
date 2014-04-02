@@ -4,6 +4,7 @@
 #include "Command.h"
 #include "WebSocketServer.h"
 #include "log.h"
+
 using namespace std;
 using namespace RaspiTank;
 
@@ -21,7 +22,8 @@ int main(int argc, char *argv[])
 		for (;;)
 		{
 			string strCmd, strCount;
-			int cmd = 0, count = 0;
+			CmdType cmd = CmdType::neutral;
+			int count = 0;
 
 			WARNING("Wait command:");
 			cin >> strCmd;
@@ -40,12 +42,12 @@ int main(int argc, char *argv[])
 				continue;
 			}
 
-			cmd = strtoul(strCmd.c_str(), NULL, 16);
+			cmd = (CmdType)strtoul(strCmd.c_str(), NULL, 16);
 			WARNING("Process command: 0x%08X", cmd);
 			WARNING("Enter frame count:");
 			cin >> strCount;
 			count = strtoul(strCount.c_str(), NULL, 10);
-			ctrl.AddCmd(new Command(cmd, count));
+			ctrl.AddCmd(cmd, count);
 		}
 		
 		ctrl.Dispose();

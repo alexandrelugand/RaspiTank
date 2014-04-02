@@ -23,6 +23,9 @@
     <Filter Include="Source files\Traces">
       <UniqueIdentifier>{55b4c905-81e0-4e8b-a298-8f30428a4d85}</UniqueIdentifier>
     </Filter>
+    <Filter Include="I2C">
+      <UniqueIdentifier>{4a521bfe-1f27-4847-b624-1da3889c552f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RaspiTank.cpp">
@@ -42,6 +45,21 @@
     </ClCompile>
     <ClCompile Include="log.cpp">
       <Filter>Source files\Traces</Filter>
+    </ClCompile>
+    <ClCompile Include="I2C\HMC5883L.cpp">
+      <Filter>I2C</Filter>
+    </ClCompile>
+    <ClCompile Include="I2C\I2Cdev.cpp">
+      <Filter>I2C</Filter>
+    </ClCompile>
+    <ClCompile Include="I2C\MPU6050.cpp">
+      <Filter>I2C</Filter>
+    </ClCompile>
+    <ClCompile Include="I2C\Sensors.cpp">
+      <Filter>I2C</Filter>
+    </ClCompile>
+    <ClCompile Include="Sync.cpp">
+      <Filter>Source files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -80,6 +98,21 @@
     </ClInclude>
     <ClInclude Include="log.h">
       <Filter>Header files\Traces</Filter>
+    </ClInclude>
+    <ClInclude Include="I2C\HMC5883L.h">
+      <Filter>I2C</Filter>
+    </ClInclude>
+    <ClInclude Include="I2C\I2Cdev.h">
+      <Filter>I2C</Filter>
+    </ClInclude>
+    <ClInclude Include="I2C\MPU6050.h">
+      <Filter>I2C</Filter>
+    </ClInclude>
+    <ClInclude Include="I2C\Sensors.h">
+      <Filter>I2C</Filter>
+    </ClInclude>
+    <ClInclude Include="Sync.h">
+      <Filter>Header files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
+#include <sys/time.h>
 #include "log.h"
 #include "WebSocketServer.h"
 #include <string>
@@ -119,13 +120,18 @@ void log_stderr(log_level level, const char *filename, int lineno, const char *f
   if (!(log_flags&LF_NOCOLOR))
     fprintf(stderr,"%s",levelcolor[level]);
 
-	char datetime[32];
-	time_t t;
-	t = time(NULL);
-	strftime(datetime, sizeof(datetime), "%Y-%m-%d %H:%M:%S", localtime(&t));
+	char datetime[80];
+	timeval curTime;
+	gettimeofday(&curTime, NULL);
+	int milli = curTime.tv_usec / 1000;
+
+	strftime(datetime, sizeof(datetime), "%Y-%m-%d %H:%M:%S", localtime(&curTime.tv_sec));
+
+	char currentTime[84] = "";
+	sprintf(currentTime, "%s.%03d", datetime, milli);
 	
 	char buf[1024];
-	string msg = string_format("[%s][%s] ", datetime, levelstr[level]);	
+	string msg = string_format("[%s][%s] ", currentTime, levelstr[level]);
 	va_list ap;
 	va_start(ap, fmt);
 	vsnprintf(buf, 1024, fmt, ap);
@@ -138,10 +144,7 @@ void log_stderr(log_level level, const char *filename, int lineno, const char *f
 		fprintf(stderr, "\033[0m\n");
 	else
 		fprintf(stderr, "\n");
-		
-	WebSocketServer& wss = WebSocketServer::GetInstance();
-	wss.Log(msg);
-	
+			
 	pthread_mutex_unlock(&log_mutex);
 }
 

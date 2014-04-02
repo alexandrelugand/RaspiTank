@@ -10,6 +10,8 @@
 
 using namespace std;
 
+#include "Sync.h"
+
 namespace RaspiTank
 {
 	class Controller : public Singleton<Controller>
@@ -21,6 +23,7 @@ namespace RaspiTank
 		virtual ~Controller();
 
 		thread cmdSenderThread;
+		thread sensorsThread;
 		int  mem_fd;
 		char *gpio_mem, *gpio_map;
 		char *spi0_mem, *spi0_map;
@@ -39,13 +42,14 @@ namespace RaspiTank
 		mutex queueLock;
 
 		static void CommandSender(Controller* ctrl);
+		static void UpdateSensors(Controller* ctrl);
+		static HANDLE WaitCmd;
 	
 	public:
 		void Initialize();
 		void Dispose();
 
 		void SetFrameInt(int interval) { frameInt = interval; }
-		void AddCmd(Command* cmd, bool lock = true);
 		void AddCmd(CmdType cmdtype, int repeat = 1, string msg = "", bool lock = true);
 		void AddCmd(json_object* jobj, bool lock = true);
 

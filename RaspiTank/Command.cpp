@@ -3,6 +3,7 @@
 #include "Utils.h"
 #include <algorithm>
 #include <string> 
+#include <sys/time.h>
 
 using namespace std;
 using namespace RaspiTank;
@@ -21,14 +22,9 @@ Command::Command(CmdType cmdtype)
 	Init(cmdtype);
 }
 
-Command::Command(CmdType cmdtype, int repeat)
+Command::Command(CmdType cmdtype, string msg)
 {
-	Init(cmdtype, repeat);
-}
-
-Command::Command(CmdType cmdtype, int repeat, string msg)
-{
-	Init(cmdtype, repeat, msg);
+	Init(cmdtype, msg);
 }
 
 Command::Command(int cmdCode)
@@ -37,15 +33,9 @@ Command::Command(int cmdCode)
 	cmd = cmdCode;
 }
 
-Command::Command(int cmdCode, int repeat)
+Command::Command(int cmdCode, string msg)
 {
-	Init(CmdType::idle, repeat);
-	cmd = cmdCode;
-}
-
-Command::Command(int cmdCode, int repeat, string msg)
-{
-	Init(CmdType::idle, repeat, msg);
+	Init(CmdType::idle, msg);
 	cmd = cmdCode;
 }
 
@@ -58,12 +48,11 @@ Command::~Command()
 {
 }
 
-void Command::Init(CmdType cmdtype /*= CmdType::neutral*/, int rep /*= 1*/, string msg /*= ""*/)
+void Command::Init(CmdType cmdtype /*= CmdType::neutral*/, string msg /*= ""*/)
 {
 	idle = false;
 	ignition = false;
 	neutral = false;
-	repeat = rep;
 	direction = Direction::Backward;
 	dirspeed = Speed::VerySlow;
 	rotation = Rotation::None;
@@ -75,6 +64,8 @@ void Command::Init(CmdType cmdtype /*= CmdType::neutral*/, int rep /*= 1*/, stri
 	recoil = false;
 	engineStart = false;
 	engineStop = false;
+	external = false;	
+	gettimeofday(&timestamp, NULL);
 
 	switch (cmdtype)
 	{
@@ -146,75 +137,76 @@ void Command::Init(CmdType cmdtype /*= CmdType::neutral*/, int rep /*= 1*/, stri
 
 void Command::ParseJSON(json_object* jobj)
 {
-	json_object_object_foreach(jobj, key, val)
+	if (jobj != NULL)
 	{
-		string strAttr(key);
-		transform(strAttr.begin(), strAttr.end(), strAttr.begin(), ::tolower);
-		if (strAttr.compare("idle") == 0)
+		json_object_object_foreach(jobj, key, val)
 		{
-			idle = json_object_get_boolean(val) != 0;
-		}
-		else if (strAttr.compare("ignition") == 0)
-		{
-			ignition = json_object_get_boolean(val) != 0;
-		}
-		else if (strAttr.compare("neutral") == 0)
-		{
-			neutral = json_object_get_boolean(val) != 0;
-		}
-		else if (strAttr.compare("repeat") == 0)
-		{
-			repeat = (unsigned int)json_object_get_int(val);
-		}
-		else if (strAttr.compare("direction") == 0)
-		{
-			direction = (Direction)json_object_get_int(val);
-		}
-		else if (strAttr.compare("dirspeed") == 0)
-		{
-			dirspeed = (Speed)json_object_get_int(val);
-		}
-		else if (strAttr.compare("rotation") == 0)
-		{
-			rotation = (Rotation)json_object_get_int(val);
-		}
-		else if (strAttr.compare("rotspeed") == 0)
-		{
-			rotspeed = (Speed)json_object_get_int(val);
-		}
-		else if (strAttr.compare("turrelrotation") == 0)
-		{
-			turrelRotation = (Rotation)json_object_get_int(val);
-		}
-		else if (strAttr.compare("canonelevation") == 0)
-		{
-			canonElevation = json_object_get_boolean(val) != 0;
-		}
-		else if (strAttr.compare("fire") == 0)
-		{
-			fire = json_object_get_boolean(val) != 0;
-		}
-		else if (strAttr.compare("gun") == 0)
-		{
-			gun = json_object_get_boolean(val) != 0;
-		}
-		else if (strAttr.compare("enginestart") == 0)
-		{
-			engineStart = json_object_get_boolean(val) != 0;
-			if (engineStart)
-				neutral = true;
-		}
-		else if (strAttr.compare("enginestop") == 0)
-		{
-			engineStop = json_object_get_boolean(val) != 0;
-			if (engineStop)
-				idle = true;
-		}
-		else if (strAttr.compare("recoil") == 0)
-		{
-			recoil = json_object_get_boolean(val) != 0;
+			string strAttr(key);
+			transform(strAttr.begin(), strAttr.end(), strAttr.begin(), ::tolower);
+			if (strAttr.compare("idle") == 0)
+			{
+				idle = json_object_get_boolean(val) != 0;
+			}
+			else if (strAttr.compare("ignition") == 0)
+			{
+				ignition = json_object_get_boolean(val) != 0;
+			}
+			else if (strAttr.compare("neutral") == 0)
+			{
+				neutral = json_object_get_boolean(val) != 0;
+			}
+			else if (strAttr.compare("direction") == 0)
+			{
+				direction = (Direction)json_object_get_int(val);
+			}
+			else if (strAttr.compare("dirspeed") == 0)
+			{
+				dirspeed = (Speed)json_object_get_int(val);
+			}
+			else if (strAttr.compare("rotation") == 0)
+			{
+				rotation = (Rotation)json_object_get_int(val);
+			}
+			else if (strAttr.compare("rotspeed") == 0)
+			{
+				rotspeed = (Speed)json_object_get_int(val);
+			}
+			else if (strAttr.compare("turrelrotation") == 0)
+			{
+				turrelRotation = (Rotation)json_object_get_int(val);
+			}
+			else if (strAttr.compare("canonelevation") == 0)
+			{
+				canonElevation = json_object_get_boolean(val) != 0;
+			}
+			else if (strAttr.compare("fire") == 0)
+			{
+				fire = json_object_get_boolean(val) != 0;
+			}
+			else if (strAttr.compare("gun") == 0)
+			{
+				gun = json_object_get_boolean(val) != 0;
+			}
+			else if (strAttr.compare("enginestart") == 0)
+			{
+				engineStart = json_object_get_boolean(val) != 0;
+				if (engineStart)
+					neutral = true;
+			}
+			else if (strAttr.compare("enginestop") == 0)
+			{
+				engineStop = json_object_get_boolean(val) != 0;
+				if (engineStop)
+					idle = true;
+			}
+			else if (strAttr.compare("recoil") == 0)
+			{
+				recoil = json_object_get_boolean(val) != 0;
+			}
 		}
 	}
+	external = true;
+	gettimeofday(&timestamp, NULL);
 	cmd = UNASSIGNED_CMD; //Préambule et postambule, CRC à 0
 }
 

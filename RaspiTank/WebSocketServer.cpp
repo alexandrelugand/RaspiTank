@@ -54,6 +54,7 @@ void WebSocketServer::Listener()
 
 void WebSocketServer::Shutdown(int signal)
 {
+	wsLock.lock();
 	WebSocketServer& wss = WebSocketServer::GetInstance();
 	if (wss.ws != NULL)
 	{
@@ -61,6 +62,7 @@ void WebSocketServer::Shutdown(int signal)
 		wss.ws = NULL;
 	}
 	onion_listen_stop(wss.o);
+	wsLock.unlock();
 }
 
 void WebSocketServer::Stop()
@@ -70,13 +72,19 @@ void WebSocketServer::Stop()
 
 onion_connection_status WebSocketServer::OnConnect(void *data, onion_request *req, onion_response *res)
 {
+	wsLock.lock();
 	WebSocketServer& wss = WebSocketServer::GetInstance();
+	if (wss.ws != NULL)
+	{
+		onion_websocket_set_opcode(wss.ws, OWS_CONNECTION_CLOSE);
+		wss.ws = NULL;
+	}
 	wss.ws = onion_websocket_new(req, res);
 	if (!wss.ws)
 		return OCS_PROCESSED;
 	INFO("Connected to RaspiTank. Waiting command...");
 	onion_websocket_set_callback(wss.ws, WebSocketServer::OnMessage);
-
+	wsLock.unlock();
 	return OCS_WEBSOCKET;
 }
 
@@ -123,8 +131,6 @@ onion_connection_status WebSocketServer::OnMessage(void *data, onion_websocket *
 
 		if (len <= 0)
 			ERROR("Error reading data: %d: %s (%d)", errno, strerror(errno), data_ready_len);
-	/*	else
-			INFO("Read from websocket: %d:\n%s", len, cmd.c_str());*/
 
 		if (jobj != NULL)
 		{

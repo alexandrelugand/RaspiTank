@@ -16,6 +16,10 @@
 #include <system_error>
 #include "log.h"
 #include "WebSocketServer.h"
+#include "I2C/Sensors.h"
+#include <linux/i2c-dev.h>
+#include <sys/ioctl.h>
+#include <sys/time.h>
 
 using namespace std;
 using namespace RaspiTank;
@@ -43,6 +47,7 @@ using namespace RaspiTank;
 //#define PIN 7
 #define PIN 14
 
+HANDLE Controller::WaitCmd;
 
 Controller::Controller()
 {
@@ -54,6 +59,7 @@ Controller::Controller()
 	gpio = NULL;
 	frameInt = 4; //4 ms
 	engineStarted = false;
+	WaitCmd = CreateEvent(NULL, TRUE, FALSE, "WaitCmd");
 }
 
 
@@ -64,16 +70,19 @@ Controller::~Controller()
 void Controller::Initialize()
 {
 	INFO("Initialize controller...");
+	SetupSensors();
 
 	cmdSenderThread = thread(&Controller::CommandSender, this);
 	sched_param sch;
 	int policy;
 	pthread_getschedparam(cmdSenderThread.native_handle(), &policy, &sch);
-	sch.sched_priority = 20;
-	if (pthread_setschedparam(cmdSenderThread.native_handle(), SCHED_FIFO, &sch)) 
+	sch.sched_priority = 99;
+	if (pthread_setschedparam(cmdSenderThread.native_handle(), SCHED_RR, &sch))
 	{
 		ERROR("Failed to increase Controller thread priority: %s", strerror(errno));
 	}
+
+	sensorsThread = thread(&Controller::UpdateSensors, this);
 
 	WebSocketServer& wss = WebSocketServer::GetInstance();
 	wss.Initialize();
@@ -144,12 +153,18 @@ void Controller::Dispose()
 void Controller::CommandSender(Controller* ctrl)
 {		
 	ctrl->SetupIO();
+	timeval curTime;
+	timeval lastCmdTime;
+	bool external = false;
+	int lastExternalCmd = UNASSIGNED_CMD;
+	
 
 	while (!ctrl->StopThread)
 	{
 		int cmd = 0;
 		int repeat = 1;
-		//string msg;
+		gettimeofday(&curTime, NULL);
+		double intervalms = ((double)(curTime.tv_sec + ((double)((double)curTime.tv_usec / 1000) / 1000)) - (double)(lastCmdTime.tv_sec + ((double)((double)lastCmdTime.tv_usec / 1000) / 1000))) * 1000;
 
 		if (!ctrl->cmdQueue.empty())
 		{
@@ -159,7 +174,16 @@ void Controller::CommandSender(Controller* ctrl)
 				shared_ptr<Command> pCmd = ctrl->cmdQueue.front();
 				ctrl->cmdQueue.pop();
 				cmd = pCmd.get()->GetCmd();
-				repeat = pCmd.get()->GetRepeat();
+				if (pCmd.get()->IsExternal())
+				{
+					lastCmdTime = pCmd.get()->GetTime();
+					lastExternalCmd = cmd;
+				}
+				else
+				{
+					lastExternalCmd = UNASSIGNED_CMD;
+				}
+				
 				if (pCmd.get()->IsEngineStart())
 				{
 					INFO("Starting engine ...");
@@ -178,19 +202,22 @@ void Controller::CommandSender(Controller* ctrl)
 			catch (...) {}
 			ctrl->queueLock.unlock();
 		}
+		else if (intervalms < 50 && lastExternalCmd != UNASSIGNED_CMD)
+		{
+			cmd = lastExternalCmd;
+		}
 		else if (ctrl->engineStarted)
 		{
 			Command pCmd(CmdType::neutral);
-			cmd = pCmd.GetCmd();				
-			repeat = 1;
+			cmd = pCmd.GetCmd();
+			lastExternalCmd = UNASSIGNED_CMD;
 		}
 		else
 		{
 			continue;
 		}
 				
-		for (int i = 0; i < repeat; i++)
-			ctrl->SendCode(cmd);
+		ctrl->SendCode(cmd);		
 	}
 }
 
@@ -210,6 +237,7 @@ void Controller::SendCode(int code)
 
 	// Force a 4ms gap between messages
 	GPIO_CLR = 1 << PIN;
+
 	usleep(frameInt * 1000);
 }
 
@@ -268,38 +296,16 @@ void Controller::StopEngine()
 	INFO("Engine stopped");
 }
 
-void Controller::AddCmd(Command* cmd, bool lock /*= true*/)
+void Controller::AddCmd(CmdType cmdtype, int repeat /*= 1*/, string msg/*=""*/, bool lock /*= true*/)
 {
-	shared_ptr<Command> pCmd(cmd);
-	if (pCmd->IsEngineStart())
-	{
-		StartEngine();
-		return;
-	}
-
-	if (pCmd->IsEngineStop())
-	{
-		StopEngine();
-		return;
-	}
-
-	if (lock)
-		queueLock.lock();
-	
-	cmdQueue.push(pCmd);
-
-	if (lock)
-		queueLock.unlock();
-}
-
-void Controller::AddCmd(CmdType cmdtype, int repeat/*=1*/, string msg/*=""*/, bool lock /*= true*/)
-{
-	shared_ptr<Command> pCmd(new Command(cmdtype, repeat, msg));
-
 	if (lock)
 		queueLock.lock();
 
-	cmdQueue.push(pCmd);
+	for (int i = 0; i < repeat; i++)
+	{
+		shared_ptr<Command> pCmd(new Command(cmdtype, msg));
+		cmdQueue.push(pCmd);
+	}
 
 	if (lock)
 		queueLock.unlock();
@@ -327,4 +333,87 @@ void Controller::AddCmd(json_object* jobj, bool lock /*= true*/)
 
 	if (lock)
 		queueLock.unlock();
+}
+
+void Controller::UpdateSensors(Controller* ctrl)
+{
+	INFO("Starting sensor polling");
+	
+
+	while (1) {
+		int fd;							  // File description
+		char *fileName = "/dev/i2c-1";    // Name of the port we will be using
+		int addressSRF = 0x70;            // Address of the SRF02 shifted right one bit
+		int addressCMPS = 0x60;           // Address of CMPS10 shifted right one bit
+		unsigned char buf[10];            // Buffer for data being read/ written on the i2c bus
+		int tmpRange = 0;                 // Temp variable to store range
+		int tmpBearing = 0;               // Temp variable to store bearing
+		int tmpPitch = 0;                 // Temp variable to store pitch
+		int tmpRoll = 0;                  // Temp variable to store roll
+		char* message;					  // Char array to write an error message to
+
+		int16_t gx, gy, gz;
+		double angle, mx, my, mz;
+		angle, mx, my = 0.0;
+
+		if ((fd = open(fileName, O_RDWR)) < 0) {					// Open port for reading and writing
+			ERROR("Failed to open i2c port");
+		}
+
+		//
+		// RANGEFINDER
+		//
+		if (ioctl(fd, I2C_SLAVE, addressSRF) < 0) {					// Set the port options and set the address of the device we wish to speak to
+			ERROR("Unable to get bus access to talk to slave");
+		}
+
+		memset(buf, 0, 10);
+		buf[0] = 0;													// Commands for performing a ranging
+		buf[1] = 81;
+
+		if ((write(fd, buf, 2)) != 2) {								// Write commands to the i2c port
+			ERROR("Error writing to i2c slave");
+		}
+
+		usleep(80000);												// This sleep waits for the ping to come back
+
+
+		memset(buf, 0, 10);												// This is the register we wish to read from
+		buf[0] = 2;
+
+		if ((write(fd, buf, 1)) != 1) {								// Send the register to read from
+			ERROR("Error writing to i2c slave");
+		}
+
+		memset(buf, 0, 10);
+		if (read(fd, buf, 2) != 2) {								// Read back data into buf[]
+			ERROR("Unable to read from slave");
+		}
+		else {
+			tmpRange = (buf[0] << 8) + buf[1];			// Calculate range as a word value
+		}
+		close(fd);
+
+		usleep(50000);
+
+		//COMPAS			
+		ReadCompas(&angle, &mx, &my, &mz);
+
+		//float declinationAngle = 2.327 / 1000.0;
+		//// If you have an EAST declination, use += declinationAngle, if you have a WEST declination, use -= declinationAngle
+		//angle -= declinationAngle;
+
+		usleep(50000);
+
+		//GYRO
+		ReadGyroscope(&gx, &gy, &gz);
+
+		// Send in web socket
+		string msg = string_format("{ \"Range\": %d, \"Mx\": %3.2f, \"My\": %3.2f, \"Mz\": %3.2f, \"Angle\": %3.2f, \"Gx\": %d, \"Gy\": %d, \"Gz\": %d }", tmpRange, mx, my, mz, angle, gx, gy, gz);
+
+		WebSocketServer& wss = WebSocketServer::GetInstance();
+		wss.SendMsg("SENSORS", msg);
+
+		usleep(500000);
+	}
 }

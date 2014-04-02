@@ -62,7 +62,6 @@ namespace RaspiTank
 		bool idle;
 		bool ignition;
 		bool neutral;
-		unsigned int repeat;
 		Direction direction;
 		Speed dirspeed;
 		Rotation rotation;
@@ -75,6 +74,8 @@ namespace RaspiTank
 		bool engineStart;
 		bool engineStop;
 		bool recoil;
+		bool external;
+		timeval timestamp;
 
 		void CRC(int& cmd);
 
@@ -82,25 +83,23 @@ namespace RaspiTank
 		static int IgnitionCmd;
 		static int NeutralCmd;
 
-		void Init(CmdType cmdtype = CmdType::neutral, int rep = 1, string msg = "");
+		void Init(CmdType cmdtype = CmdType::neutral, /*int rep = 1,*/ string msg = "");
 		void ParseJSON(json_object* jobj);
 
 	public:
 		Command();
 		Command(CmdType cmdtype);
-		Command(CmdType cmdtype, int repeat);
-		Command(CmdType cmdtype, int repeat, string msg);
+		Command(CmdType cmdtype, string msg);
 		Command(int cmdCode);
-		Command(int cmd, int repeat);
-		Command(int cmdCode, int repeat, string msg);
+		Command(int cmdCode, string msg);
 		Command(json_object* jobj);
 		virtual ~Command();
 		
 		void Idle() { idle = true; }
 		void Ignition() { ignition = true; }
 
-		void SetRepeat(unsigned int count) { repeat = count; }
-		const int GetRepeat() { return repeat;  }
+		bool IsExternal() { return external; }
+		timeval GetTime() { return timestamp; }
 		void SetDirection(Direction dir, Speed speed = Intermidiate) { direction = dir; if (speed < VerySlow) speed = VerySlow; if (speed > VeryFast) speed = VeryFast; dirspeed = speed; }
 		void SetRotation(Rotation rot, Speed speed = Intermidiate) { rotation = rot; if (speed < VerySlow) speed = VerySlow; if (speed > VeryFast) speed = VeryFast; rotspeed = speed; }
 		void SetTurrelRotation(Rotation rot) { turrelRotation = rot; }
